@@ -1,0 +1,228 @@
+:root {
+  --sand: #E2C08F; /* overall page colour - colour of australian sand */
+  --sand-dark: color-mix(in srgb, var(--sand) 90%, #ffffff);
+  --charcoal: #1E1A17; /* jumbotron colour */
+  --charcoal-light: color-mix(in srgb, var(--charcoal) 96%, #ffffff);
+  --black: #000000; /* theme for body text*/
+  --earth: #447859;
+  --burntorange: #c3751d;
+  --brown: #A0622A;
+  --olivebrown: #4e3a1b; 
+  --slateblue: #5c8aca; 
+  --maroon: #5D100A;
+}
+
+body {
+  background-color: var(--sand); 
+  color: var(--black) !important;
+}
+
+.navbar-custom {
+  background-color: var(--charcoal);
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-nav .nav-link {
+  color: var(--sand) !important;
+  font-family: "Garamond", serif;
+}
+
+.btn-custom {
+  color: var(--sand) !important;
+}
+
+.jumbotron-custom {
+  background-color: var(--charcoal);
+  color: var(--sand);
+  font-family: "Garamond", serif;
+}
+
+.section-label {
+  font-weight: 500;
+  font-family: "Helvetica Neue", sans-serif;
+  text-transform: uppercase;
+  color: var(--earth);
+  font-size: 0.8rem;
+}
+
+.thumb-placeholder { 
+  height:140px; 
+  background:var(--charcoal); 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+  flex-direction:column; 
+  color:var(--burntorange); 
+  font-size:.65rem; 
+  letter-spacing:.12em; 
+  text-transform:uppercase; 
+}
+
+.thumb-approved { 
+  height:140px; 
+  background:var(--sand); 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+  flex-direction:column; 
+  color:var(--charcoal); 
+  font-size:1rem; 
+  letter-spacing:.12em; 
+  text-transform:uppercase; 
+}
+
+.card-title {
+  font-size:1.1rem;
+
+}
+.card-text {
+  font-size: 0.8rem;
+}
+
+.meta-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+.meta-value {
+  font-size: .8rem;
+  font-weight: 300;
+  color: var(--charcoal);
+}
+
+.display-4 {
+  font-weight: 300;
+  color: var(--sand) !important;
+  font-size: 2.9rem;
+}
+
+.display-5 {
+  font-weight: 600;
+  font-family: "Helvetica", sans-serif;
+  color: var(--olivebrown);
+}
+
+.display-6 {
+  font-size: 2rem;
+}
+
+.subtitle {
+  font-weight: 200;
+  font-size: 1rem;
+  color: var(--sand) !important;
+}
+
+.callout-box {
+  padding: 1rem;
+  font-size: .88rem;
+  font-weight: 400;
+  color: var(--burntorange);
+  border-left: 3px solid;
+  font-style: italic;
+}
+
+.card-meta {
+  background-color: var(--sand-dark);
+}
+
+.form-label {
+  color: var(--olivebrown);
+  font-weight: 500;
+}
+
+.form-control {
+  background-color: var(--sand) !important;
+  border-color: var(--charcoal);
+  color: var(--charcoal) !important;
+}
+
+.form-control:focus {
+  border-color: var(--charcoal-light);
+}
+
+.form-control::placeholder {
+  color: var(--charcoal) !important;
+  font-style: italic;
+  opacity: 9.7;
+}
+
+.panel-title {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.panel-discussion {
+  font-size: 2.2rem;
+  font-weight: 600;
+}
+
+.section-rule {
+    border-top: 1px solid var(--burntorange); 
+    width: 80px;                   
+    margin-top: 0.25rem;           
+    margin-bottom: 1.25rem;        
+}
+
+.panel-disclaimer {
+  font-weight: 300;
+  font-size: .9rem;
+  font-style: italic;
+}
+
+.btn-approve {
+  font-weight: 500;
+  background: var(--earth);
+  color: #ffffff;
+}
+
+.btn-approve:hover {
+  background: color-mix(in srgb, var(--earth) 90%, #ffffff);
+  color: #ffffff;
+}
+
+.btn-restrict {
+  background: var(--olivebrown);
+  color: #ffffff;
+}
+
+.btn-restrict:hover {
+  background: color-mix(in srgb, var(--olivebrown) 90%, #ffffff);
+  color: #ffffff;
+}
+
+.btn-reject {
+  background: var(--maroon);
+  color: #ffffff;
+}
+
+.btn-reject:hover {
+  background: color-mix(in srgb, var(--maroon) 90%, #ffffff);
+  color: #ffffff;
+}
+
+.comment-block { 
+  border-left:3px solid var(--burntorange); 
+  padding:.75rem 1rem; 
+  background: color-mix(in srgb, var(--burntorange) 60%, #ffffff); 
+  margin-bottom:.75rem; 
+}
+
+.comment-block small{ 
+  text-transform: uppercase;
+  font-size: .68rem;
+  font-weight: 600;
+}
+
+.comment-block p { 
+  font-weight: 300;
+}
+
+.btn-comment {
+  color: var(--charcoal);
+}
+
+.restricted-banner {
+  background: color-mix(in srgb, var(--olivebrown) 80%, #000000);
+  color: var(--burntorange);
+}
