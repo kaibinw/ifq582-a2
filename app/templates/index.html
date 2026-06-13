@@ -9,7 +9,7 @@
         <div class="container-fluid py-3">
             <h1 class="display-3">Custodians of<br/><em>Country &amp; Story</em></h1>
             <p class="col-md-8 fs-4">A governed digital archive of Indigenous knowledges and cultural heritage materials — managed in partnership with a Community Elder Advisory Council under the CARE principles.</p>
-            <a href="#" class="btn btn-outline-dark mt-2 btn-custom">Browse Collection</a>
+            <a href="#collection" class="btn btn-outline-dark mt-2 btn-custom">Browse Collection</a>
         </div>
     </div>
 {% endblock %}
@@ -25,7 +25,7 @@
     </div>
 
  
-    <div class="container mb-5">
+    <div class="container mb-5" id="collection">
         <p class="section-label mb-2">Featured Items</p>
         <div class="row">
 
@@ -40,6 +40,7 @@
                             <p class="card-text">
                                 Yuggera Country · Oral History · 1977
                             </p>
+                            <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=1)}}"></a>
                     </div>
                 </div>
             </div>
@@ -53,11 +54,12 @@
                         <span class="badge text-bg-danger mb-2">Restricted</span>
                         <h4 class="card-title">Item details not available</h4>
                         <p class="card-text">Waka Waka Country · Ceremonial</p>
+                        <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=2)}}"></a>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card">
+                <div class="card" style="position: relative;">
                     <div class="thumb-placeholder">
                         <span class="mt-1">Pending Approval</span>
                     </div>
@@ -66,6 +68,7 @@
                         <span class="badge text-bg-warning mb-2">Pending Approval</span>
                         <h4 class="card-title">Item details not available</h4>
                         <p class="card-text">Gugu Badhun · Map</p>
+                        <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=3)}}"></a>
                     </div>
                 </div>
             </div>
