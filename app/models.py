@@ -1,8 +1,32 @@
+"""
+Ngurra Digital Library - Database Models
+
+SQLAlchemy ORM mapping Python classes to MySQL tables
+(Note: SQLAlchemy was chosen based on Flask best practices),
+but requires lecturer approval as it was not on the initial permitted packages. 
+If rewritten to use Flask-MySQLdb, the architecture remains the same.)
+
+Models:
+    - Community: cultural communities (1:N with Items, M:N with Users)
+    - Collection: collection of items
+    - Users: system users with roles and permissions
+    - Item - individual library items
+    - CulturalMetdata: metadata, approval status, sensitivity levels
+    - UsersCommunity: junction table for many-to-many relationship between Community and Users
+
+"""
+
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+"""
+Community Model
+
+Represents a cultural community in the Ngurra Library.
+One Community can have many Items and many Users (via UsersCommunity junction table)
+"""
 class Community(db.Model):
     __tablename__ = 'Community'
     
@@ -22,15 +46,23 @@ class Community(db.Model):
         nullable=False
     )
 
+    # Many-to-many relationship: Community <-> Users
+    # via junction table: UsersCommunity
     users = db.relationship(
         'Users',
         secondary='UsersCommunity',
         backref='communities'
     )
-    # helpful for debugging - when using print() it gives everything in the return line.
+
+    # added for debugging - easy to see at a glance whether database is being pulled
     def __repr__(self):
         return f'<Community {self.communityID}: {self.communityName}>'
 
+"""
+Collection Model
+
+Represents a collection of items in the library. 
+"""
 class Collection(db.Model):
     __tablename__ = 'Collection'
 
@@ -45,6 +77,7 @@ class Collection(db.Model):
         nullable=False
     )
 
+    # pending values confirmation
     # collectionStatus = db.Column(
     #     db.Enum('Option A', 'Option B'),
     #     nullable=False
@@ -55,9 +88,16 @@ class Collection(db.Model):
         default=datetime.utcnow
     )
 
+    # added for debugging - easy to see at a glance whether database is being pulled
     def __repr__(self):
         return f'<Collection {self.collectionID}: {self.collectionName}>'
 
+"""
+Users Model
+
+Represents all the users that are available for the library. 
+One User can have multiple communities (via UsersCommunity junction table)
+"""
 class Users(db.Model):
     __tablename__ = 'Users'
 
@@ -98,20 +138,28 @@ class Users(db.Model):
     )
     
     userPassword = db.Column(
-        db.String(60),
+        db.String(60), # password must be bcrypt hash, 60 chars
         nullable=False
     )
 
+    # represents the many-to-many Community <-> Users relationship. 
+    # via junction table
     communities = db.relationship(
         'Community',
         secondary='UsersCommunity',
         backref='users'
     )
 
+    # added for debugging - easy to see at a glance whether database is being pulled
     def __repr__(self):
         return f'<User {self.userID}: {self.userEmail}>'
 
+"""
+Item Model
 
+All the library items
+Items in the library can be in many collections and community
+"""
 
 class Item(db.Model):
     __tablename__ = 'Item'
@@ -124,14 +172,14 @@ class Item(db.Model):
     
     collectionID = db.Column(
         db.Integer,
-        nullable=False,
-        db.ForeignKey('Collection.collectionID')
+        db.ForeignKey('Collection.collectionID'),
+        nullable=False
     )
     
     communityID = db.Column(
         db.Integer,
-        nullable=False,
-        db.ForeignKey('Community.communityID')
+        db.ForeignKey('Community.communityID'),
+        nullable=False        
     )
     
     itemTitle = db.Column(
@@ -157,9 +205,15 @@ class Item(db.Model):
     collection = db.relationship('Collection', backref='items')
     community = db.relationship('Community', backref='items')
 
+    # added for debugging - easy to see at a glance whether database is being pulled
     def __repr__(self):
         return f'<Items: {self.itemID}: {self.itemTitle}>'    
 
+"""
+Cultural Metadata Model
+
+Contains all the cultural metadata for the items in the library. 
+"""
 
 class CulturalMetadata(db.Model):
     __tablename__ = 'CulturalMetadata'
@@ -187,7 +241,7 @@ class CulturalMetadata(db.Model):
         nullable=True
     )
 
-    # pending confirmation if item created date is true.
+    # pending confirmation if item created date is needed.
     # itemCreatedDate = db.Column(
     #     db.DateTime
     #     default=datetime.utcnow
@@ -224,6 +278,7 @@ class CulturalMetadata(db.Model):
     item = db.relationship('Item', backref='culturalmetadata')
     user = db.relationship('Users', backref='culturalmetadata')
 
+    # added for debugging - easy to see at a glance whether database is being pulled
     def __repr__(self):
         return f'<CulturalMetadata: {self.metadataID}: {self.itemID}, {self.itemStatus}>'
 
@@ -244,6 +299,7 @@ class UsersCommunity(db.Model):
         primary_key=True
     )
 
+    # added for debugging - easy to see at a glance whether database is being pulled
     def __repr__(self):
         return f'<UserCommunity: User {self.userID} ↔ Community {self.communityID}>'
 
