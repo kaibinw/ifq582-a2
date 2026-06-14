@@ -1,12 +1,18 @@
 # Ngurra Digital Library
 A Flask web application for managing Indigenous cultural heritage under CARE Principles. 
+
 ---
+
 ## Quick Start
 1. Clone the repo
 2. `python -m venv venv`
 3. `source venv/bin/activate`  (Mac/Linux) or `venv\Scripts\activate` (Windows)
 4. `pip install -r requirements.txt`
 5. `python run.py` → visit `http://localhost:5000`
+
+`git pull` 
+run this whenever you start work to get everyone's latest commits. 
+---
 
 ## Tech Stack
 - **Backend:** Python, Flask
@@ -16,6 +22,7 @@ A Flask web application for managing Indigenous cultural heritage under CARE Pri
 - **Forms:** WTForms
 - **Testing:** pytest
 
+---
 
 ## Project Structure
 app/
@@ -35,6 +42,8 @@ run.py                # Entry point
 requirements.txt      # Dependencies
 README.md             # This file
 
+---
+
 ## Team Assignments
 
 <!-- SECTION 5: Who's doing what (helps avoid conflicts) -->
@@ -46,6 +55,7 @@ README.md             # This file
 | Matt | Assessment panel, review workflow |
 | Kai | CSS, responsive design, README, tests |
 
+---
 
 ## Notes for Examiners (VIA)
 
