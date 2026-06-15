@@ -19,7 +19,7 @@ run this whenever you start work to get everyone's latest commits.
 ## Tech Stack
 - **Backend:** Python, Flask
 - **Frontend:** Jinja2 templates, Bootstrap 5.3
-- **Database:** MySQL + SQLAlchemy ORM
+- **Database:** MySQL + MySQLdb ORM
 - **Auth:** Flask-Login
 - **Forms:** WTForms
 - **Testing:** pytest
@@ -29,7 +29,7 @@ run this whenever you start work to get everyone's latest commits.
 ## Project Structure
 app/
 ├── init.py         # Flask app factory
-├── models.py        # SQLAlchemy models (Martin + Kai)
+├── models.py        # MySQLdb models (Martin + Kai)
 ├── routes.py        # Flask routes (Jordan, Claudia, Matt add here)
 templates/
 ├── base.html        # Jinja2 skeleton
@@ -51,7 +51,7 @@ README.md             # This file
 <!-- SECTION 5: Who's doing what (helps avoid conflicts) -->
 | Person | Responsibility |
 |--------|-----------------|
-| Martin | Database schema, SQLAlchemy models |
+| Martin | Database schema, MySQLdb models |
 | Jordan | Flask-Login, registration, RBAC |
 | Claudia | Home, catalog, search, item detail |
 | Matt | Assessment panel, review workflow |
@@ -63,3 +63,5 @@ README.md             # This file
 
 <!-- Left blank for now, but important for submission -->
 (Will fill in later — explain your design choices, what you built, how to navigate the code)
+
+- Flask-MySQLdb vs Flask-SQLAlchemy. Online searches seems to lean towards Flask-SQLAlchemy as the main database best practices, so we followed that. But choosing to revert and rewrite back to Flask-MySQLdb helped us understand the changes and differences in both, and it also falls in line with the requirements.txt of this assignment. 
