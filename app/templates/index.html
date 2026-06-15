@@ -2,76 +2,104 @@
 
 {% block title %}Home | Ngurra Digital Library{% endblock %}
 
-
 {% block hero %}
-    <!--- Bootstrap 5 Jumbotron for the Main Page -->
+    <!-- Bootstrap 5 Jumbotron for the Main Page -->
     <div class="p-5 mb-4 jumbotron-custom">
         <div class="container-fluid py-3">
             <h1 class="display-3">Custodians of<br/><em>Country &amp; Story</em></h1>
-            <p class="col-md-8 fs-4">A governed digital archive of Indigenous knowledges and cultural heritage materials — managed in partnership with a Community Elder Advisory Council under the CARE principles.</p>
+            <p class="col-md-8 fs-4">
+                A governed digital archive of Indigenous knowledges and cultural heritage materials — managed in partnership with a Community Elder Advisory Council under the CARE principles.
+            </p>
             <a href="#collection" class="btn btn-outline-dark mt-2 btn-custom">Browse Collection</a>
         </div>
     </div>
 {% endblock %}
 
-{% block content %}   
-    <!-- Acknowledgement of Country Banner-->
+{% block content %}
+
+    <!-- Acknowledgement of Country Banner -->
     <div class="container text-center my-4">
         <div class="py-3 px-5 text-dark">
             <span class="border-start border-danger ps-3">
                 <em>The Ngurra Digital Library acknowledges the Traditional Custodians of these lands and pays respect to Elders past, present, and emerging.</em>
-            </span>  
+            </span>
         </div>
     </div>
 
- 
     <div class="container mb-5" id="collection">
-        <p class="section-label mb-2">Featured Items</p>
-        <div class="row">
+        <p class="section-label mb-2">Browse Collection</p>
 
-            <div class="col-sm-6 col-md-4">
-                <div class="card">
-                    <div class="thumb-approved">
-                        <span class="mt-1">Oral History</span>
-                    </div>
-                    <div class="card-body">
-                        <span class="badge text-bg-success mb-2">Approved</span>
-                        <h4 class="card-title">Memories of River Life</h4>
-                            <p class="card-text">
-                                Yuggera Country · Oral History · 1977
-                            </p>
-                            <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=1)}}"></a>
-                    </div>
-                </div>
+        <!-- Search and filter form -->
+        <form method="GET" action="{{ url_for('main.index') }}" class="row g-3 mb-4">
+            <div class="col-md-6">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control" 
+                    placeholder="Search by title, description or cultural group"
+                    value="{{ search_query }}"
+                >
             </div>
-            <div class="col-sm-6 col-md-4">
-                <div class="card">
-                    <div class="thumb-placeholder">
-                        <span class="mt-1">Access Restricted</span>
-                    </div>
 
-                    <div class="card-body">
-                        <span class="badge text-bg-danger mb-2">Restricted</span>
-                        <h4 class="card-title">Item details not available</h4>
-                        <p class="card-text">Waka Waka Country · Ceremonial</p>
-                        <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=2)}}"></a>
-                    </div>
-                </div>
+            <div class="col-md-4">
+                <select name="category" class="form-select">
+                    <option value="">All categories</option>
+                    <option value="Photograph" {% if selected_category == "Photograph" %}selected{% endif %}>Photograph</option>
+                    <option value="Oral History" {% if selected_category == "Oral History" %}selected{% endif %}>Oral History</option>
+                    <option value="Document" {% if selected_category == "Document" %}selected{% endif %}>Document</option>
+                    <option value="Map" {% if selected_category == "Map" %}selected{% endif %}>Map</option>
+                    <option value="Ceremonial" {% if selected_category == "Ceremonial" %}selected{% endif %}>Ceremonial</option>
+                </select>
             </div>
-            <div class="col-sm-6 col-md-4">
-                <div class="card" style="position: relative;">
-                    <div class="thumb-placeholder">
-                        <span class="mt-1">Pending Approval</span>
-                    </div>
 
-                    <div class="card-body">
-                        <span class="badge text-bg-warning mb-2">Pending Approval</span>
-                        <h4 class="card-title">Item details not available</h4>
-                        <p class="card-text">Gugu Badhun · Map</p>
-                        <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=3)}}"></a>
-                    </div>
-                </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-dark w-100">Search</button>
             </div>
-        </div>
+        </form>
+
+        <!-- Collection items -->
+        {% if items %}
+            <div class="row">
+                {% for item in items %}
+                    <div class="col-sm-6 col-md-4 mb-4">
+                        <div class="card h-100">
+
+                            {% if item.access_level == "Public" %}
+                                <div class="thumb-approved">
+                                    <span class="mt-1">{{ item.category }}</span>
+                                </div>
+                            {% else %}
+                                <div class="thumb-placeholder">
+                                    <span class="mt-1">Access Restricted</span>
+                                </div>
+                            {% endif %}
+
+                            <div class="card-body">
+                                {% if item.review_status == "Approved" %}
+                                    <span class="badge text-bg-success mb-2">Approved</span>
+                                {% elif item.review_status == "Pending" %}
+                                    <span class="badge text-bg-warning mb-2">Pending Approval</span>
+                                {% else %}
+                                    <span class="badge text-bg-danger mb-2">Restricted</span>
+                                {% endif %}
+
+                                <h4 class="card-title">{{ item.title }}</h4>
+
+                                <p class="card-text">
+                                    {{ item.cultural_group }} · {{ item.category }} · {{ item.access_level }}
+                                </p>
+
+                                <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=item.id) }}"></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                No items found.
+            </div>
+        {% endif %}
     </div>
+
 {% endblock %}
