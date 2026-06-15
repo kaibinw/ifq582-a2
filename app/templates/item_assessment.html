@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Item Assessment | Ngurra Digital Library{% endblock %}
+{% block title %}{{ item['itemTitle'] }} Assessment | Ngurra Digital Library{% endblock %}
 
 {% block hero %}
     <div class="restricted-banner text-center py-2">
@@ -15,8 +15,8 @@
                 
 
                 <div class="col-md-8 text-white">
-                    <span class="section-label mb-2 d-block">Assessment · Item I003</span>
-                    <h1 class="display-6">Sacred Site Mapping - Elder Thomas Nguburri </h1>
+                    <span class="section-label mb-2 d-block">Assessment · {{ item['itemDate'] }}</span>
+                    <h1 class="display-6">{{ item['itemTitle'] }} - {{ item['userHonourific'] }} {{ item['userFirstName']}} {{ item['userLastName'] }}</h1>
                 </div>
 
             </div>
@@ -35,37 +35,37 @@
                         <tr>
                             <td>
                                 <span class="meta-label">Access Status</span>
-                                <div><span class="badge text-bg-warning mt-1">Pending Approval</span></div>
+                                <div><span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mt-1">{{ item['itemStatus'] }}</span></div>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <span class="meta-label">Media Type</span>
-                                <div class="meta-value">Map</div>
+                                <div class="meta-value">{{ item['itemMediaType'] }}</div>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <span class="meta-label">Community of Origin</span>
-                                <div class="meta-value">Gugu Badhun, North Queensland</div>
+                                <div class="meta-value">{{ item['communityName']}}, {{ item['communityRegion']}}</div>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <span class="meta-label">Language Group</span>
-                                <div class="meta-value">Gugu Badhun</div>
+                                <div class="meta-value">{{ item['itemLanguageGroup']}}</div>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <span class="meta-label">Date Recorded</span>
-                                <div class="meta-value">1960</div>
+                                <div class="meta-value">{{ item['itemDate']}}</div>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <span class="meta-label">Sensitivity Level</span>
-                                <div class="meta-value">Low</div>
+                                <div class="meta-value">{{ item['itemSensitivityLabel']}}</div>
                             </td>
                         </tr>
                     </tbody>

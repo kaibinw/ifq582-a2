@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Memories of River Life | Ngurra Digital Library{% endblock %}
+{% block title %}{{ item['itemTitle'] }} | Ngurra Digital Library{% endblock %}
 
 {% block hero %}
     <div class="p-5 mb-4 rounded-3 jumbotron-custom">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8 text-white">
-                    <span class="section-label mb-2 d-block">Collection · Oral Histories of South East Queensland</span>
-                    <h1 class="display-4">Memories of River Life - Elder Aunty Doris Bancroft </h1>
-                    <p class="subtitle">Yuggera Country · Oral History · 1977</p>
+                    <span class="section-label mb-2 d-block">Collection · {{ item['collectionName'] }}</span>
+                    <h1 class="display-4">{{ item['itemTitle']}} </h1>
+                    <p class="subtitle">{{ item['communityName'] }} · {{ item['itemMediaType'] }} · {{ item['itemDate'] }}</p>
                     <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">Back to Collection</a>
                 </div>
             </div>
@@ -30,37 +30,37 @@
                     <tr>
                         <td>
                             <span class="meta-label">Access Status</span>
-                            <div><span class="badge text-bg-success mt-1">Approved</span></div>
+                            <div><span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mt-1">{{ item['itemStatus'] }}</span></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <span class="meta-label">Media Type</span>
-                            <div class="meta-value">Audio Recording</div>
+                            <div class="meta-value">{{ item['itemMediaType'] }}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <span class="meta-label">Community of Origin</span>
-                            <div class="meta-value">Yuggera Country, South East Queensland</div>
+                            <div class="meta-value">{{ item['communityRegion'] }}, {{ item['communityName'] }}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <span class="meta-label">Language Group</span>
-                            <div class="meta-value">Yuggera</div>
+                            <div class="meta-value">{{ item['itemLanguageGroup'] }}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <span class="meta-label">Date Recorded</span>
-                            <div class="meta-value">1977 · Duration 42 min</div>
+                            <div class="meta-value">{{ item['itemDate'] }} · Duration 42 min</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <span class="meta-label">Sensitivity Level</span>
-                            <div class="meta-value">Low</div>
+                            <div class="meta-value">{{ item['itemSensitivityLabel']}}</div>
                         </td>
                     </tr>
                 </tbody>
@@ -71,16 +71,17 @@
             <hr class="accent-line mb-4">
             
             <p class="item-description mb-4">
-                A deeply moving oral history recording with Elder Aunty Doris Bancroft of the Yuggera people, sharing her childhood memories and generational stories of life along the Maiwar (Brisbane River). Aunty Doris brings the river corridor to life as she details traditional fishing customs, the seasonal movements of her ancestors, and the enduring community gathering spaces that map the water’s edge.
+                {{ item['itemDescription'] }}
             </p>
             
             <div class="callout-box note-box mb-3">
-                <strong>Cultural Note:</strong> This item has been reviewed and approved for public access by the Elder Advisory Council. It does not contain sacred or restricted knowledge.
+                <strong>Cultural Note:</strong> {{ item['itemCulturalNote'] }}
             </div>
-            
+            {% if item['itemCulturalWarningFlag'] %}
             <div class="callout-box warning-box mb-5">
-                ⚠ This recording may reference deceased persons. Listener discretion is advised.
+                ⚠ {{ item['itemCulturalWarningText'] }}
             </div>
+            {% endif %}
             
             <h2 class="display-5 mb-1">Request to View at Library</h2>
             <hr class="accent-line mb-4">
