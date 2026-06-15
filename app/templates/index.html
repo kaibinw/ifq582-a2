@@ -28,50 +28,22 @@
     <div class="container mb-5" id="collection">
         <p class="section-label mb-2">Featured Items</p>
         <div class="row">
-
+            <!--- Starts the Loop --->
+            {% for item in items %} 
             <div class="col-sm-6 col-md-4">
                 <div class="card">
-                    <div class="thumb-approved">
-                        <span class="mt-1">Oral History</span>
+                    <div class="{% if item['itemStatus'] == 'Approved' %}thumb-approved{% else %}thumb-placeholder{% endif %}">
+                        <span class="mt-1">{{ item['itemMediaType'] }}</span>
                     </div>
                     <div class="card-body">
-                        <span class="badge text-bg-success mb-2">Approved</span>
-                        <h4 class="card-title">Memories of River Life</h4>
-                            <p class="card-text">
-                                Yuggera Country · Oral History · 1977
-                            </p>
-                            <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=1)}}"></a>
+                        <span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mb-2">{{ item['itemStatus'] }}</span>
+                        <h4 class="card-title">{{ item['itemTitle'] }}</h4>
+                            <p class="card-text">{{ item['itemDescription'] }}</p>
+                            <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=item['itemID'])}}"></a>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-4">
-                <div class="card">
-                    <div class="thumb-placeholder">
-                        <span class="mt-1">Access Restricted</span>
-                    </div>
-
-                    <div class="card-body">
-                        <span class="badge text-bg-danger mb-2">Restricted</span>
-                        <h4 class="card-title">Item details not available</h4>
-                        <p class="card-text">Waka Waka Country · Ceremonial</p>
-                        <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=2)}}"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-4">
-                <div class="card" style="position: relative;">
-                    <div class="thumb-placeholder">
-                        <span class="mt-1">Pending Approval</span>
-                    </div>
-
-                    <div class="card-body">
-                        <span class="badge text-bg-warning mb-2">Pending Approval</span>
-                        <h4 class="card-title">Item details not available</h4>
-                        <p class="card-text">Gugu Badhun · Map</p>
-                        <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=3)}}"></a>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
