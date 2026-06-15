@@ -58,11 +58,17 @@ def get_item_with_metadata(item_id):
     cursor = mysql.connection.cursor()
     sql = "
     SELECT 
-        i.itemID, i.itemDate, i.itemTitle, i.itemDescription, i.itemImage, i.itemMediaType, i.collectionID, i.communityID, cm.metadataID,
-        cm.itemStatus, cm.itemStatusHeader, cm.itemApprovalDate, cm.itemApproverID, cm.itemLanguageGroup, cm.itemCulturalNote, cm.itemSensitivityLabel,
+        i.itemID, i.itemDate, i.itemTitle, i.itemDescription, i.itemImage, i.itemMediaType, i.collectionID, i.communityID, 
+        c.communityName, c.communityRegion,
+        col.collectionID, col.collectionName, col.collectionShortName, col.collectionDateCreated,
+        u.userHonourific, u.userFirstName, u.userLastName,
+        cm.metadataID, cm.itemStatus, cm.itemStatusHeader, cm.itemApprovalDate, cm.itemApproverID, cm.itemLanguageGroup, cm.itemCulturalNote, cm.itemSensitivityLabel,
         cm.itemCulturalWarningFlag, cm.itemCulturalWarningText
     FROM Item i
     LEFT JOIN CulturalMetadata cm ON i.itemID = cm.itemID
+    LEFT JOIN Community c ON i.communityID = c.communityID
+    LEFT JOIN Collection col ON i.collectionID = col.collectionID
+    LEFT JOIN Users u ON cm.itemApproverID = u.userID
     WHERE i.itemID = %s"
     cursor.execute(sql, (item_id,))
     result = cursor.fetchone()
