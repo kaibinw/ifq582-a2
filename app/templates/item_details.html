@@ -1,16 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Memories of River Life | Ngurra Digital Library{% endblock %}
+{% block title %}{{ item.title }} | Ngurra Digital Library{% endblock %}
 
 {% block hero %}
     <div class="p-5 mb-4 rounded-3 jumbotron-custom">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8 text-white">
-                    <span class="section-label mb-2 d-block">Collection · Oral Histories of South East Queensland</span>
-                    <h1 class="display-4">Memories of River Life - Elder Aunty Doris Bancroft </h1>
-                    <p class="subtitle">Yuggera Country · Oral History · 1977</p>
-                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">Back to Collection</a>
+                    <span class="section-label mb-2 d-block">
+                        Collection · {{ item.category }}
+                    </span>
+
+                    <h1 class="display-4">{{ item.title }}</h1>
+
+                    <p class="subtitle">
+                        {{ item.cultural_group }} · {{ item.category }} · {{ item.year }}
+                    </p>
+
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">
+                        Back to Collection
+                    </a>
                 </div>
             </div>
         </div>
@@ -19,89 +28,123 @@
 
 {% block content %}
     <div class="row">
-        
+
         <div class="col-md-4 mb-4 mb-md-0">
-            <div class="thumb-approved mb-4">
-                Oral History Recording
-            </div>
-            
+
+            {% if item.access_level == "Public" %}
+                <div class="thumb-approved mb-4">
+                    {{ item.category }}
+                </div>
+            {% else %}
+                <div class="thumb-placeholder mb-4">
+                    Access Restricted
+                </div>
+            {% endif %}
+
             <table class="table table-metadata">
                 <tbody>
                     <tr>
                         <td>
                             <span class="meta-label">Access Status</span>
-                            <div><span class="badge text-bg-success mt-1">Approved</span></div>
+                            <div>
+                                {% if item.review_status == "Approved" %}
+                                    <span class="badge text-bg-success mt-1">Approved</span>
+                                {% elif item.review_status == "Pending" %}
+                                    <span class="badge text-bg-warning mt-1">Pending Approval</span>
+                                {% else %}
+                                    <span class="badge text-bg-danger mt-1">Restricted</span>
+                                {% endif %}
+                            </div>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <span class="meta-label">Media Type</span>
-                            <div class="meta-value">Audio Recording</div>
+                            <div class="meta-value">{{ item.category }}</div>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <span class="meta-label">Community of Origin</span>
-                            <div class="meta-value">Yuggera Country, South East Queensland</div>
+                            <div class="meta-value">{{ item.cultural_group }}</div>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
-                            <span class="meta-label">Language Group</span>
-                            <div class="meta-value">Yuggera</div>
+                            <span class="meta-label">Date / Year</span>
+                            <div class="meta-value">{{ item.year }}</div>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <span class="meta-label">Date Recorded</span>
-                            <div class="meta-value">1977 · Duration 42 min</div>
-                        </td>
-                    </tr>
+
                     <tr>
                         <td>
                             <span class="meta-label">Sensitivity Level</span>
-                            <div class="meta-value">Low</div>
+                            <div class="meta-value">{{ item.sensitivity_level }}</div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
         <div class="col-md-8">
             <h2 class="display-5 mb-1">About this Item</h2>
             <hr class="accent-line mb-4">
-            
-            <p class="item-description mb-4">
-                A deeply moving oral history recording with Elder Aunty Doris Bancroft of the Yuggera people, sharing her childhood memories and generational stories of life along the Maiwar (Brisbane River). Aunty Doris brings the river corridor to life as she details traditional fishing customs, the seasonal movements of her ancestors, and the enduring community gathering spaces that map the water’s edge.
-            </p>
-            
+
+            {% if item.access_level == "Public" %}
+                <p class="item-description mb-4">
+                    {{ item.description }}
+                </p>
+            {% else %}
+                <div class="callout-box warning-box mb-4">
+                    This item has restricted access. Full details are limited due to cultural sensitivity.
+                </div>
+            {% endif %}
+
             <div class="callout-box note-box mb-3">
-                <strong>Cultural Note:</strong> This item has been reviewed and approved for public access by the Elder Advisory Council. It does not contain sacred or restricted knowledge.
+                <strong>Cultural Note:</strong>
+                This item is managed under cultural access and review conditions.
             </div>
-            
-            <div class="callout-box warning-box mb-5">
-                ⚠ This recording may reference deceased persons. Listener discretion is advised.
-            </div>
-            
+
+            {% if item.sensitivity_level == "High" %}
+                <div class="callout-box warning-box mb-5">
+                    ⚠ This item may contain culturally sensitive or restricted material.
+                </div>
+            {% elif item.review_status == "Pending" %}
+                <div class="callout-box warning-box mb-5">
+                    ⚠ This item is pending approval by the Elder Advisory Council.
+                </div>
+            {% endif %}
+
             <h2 class="display-5 mb-1">Request to View at Library</h2>
             <hr class="accent-line mb-4">
-            <p class="text-muted small mb-4">To access the original recording in person, complete the form below. Library staff will respond within 5 business days.</p>
-            
+
+            <p class="text-muted small mb-4">
+                To request access to this item, complete the form below. Library staff will respond within 5 business days.
+            </p>
+
             <form>
                 <div class="form-group mb-3">
                     <label class="form-label">Full Name</label>
                     <input type="text" class="form-control" placeholder="Your full name">
                 </div>
+
                 <div class="form-group mb-3">
                     <label class="form-label">Email Address</label>
                     <input type="email" class="form-control" placeholder="your@email.com">
                 </div>
+
                 <div class="form-group mb-4">
                     <label class="form-label">Reason for Access</label>
                     <textarea class="form-control" rows="4" placeholder="Briefly describe your research purpose"></textarea>
                 </div>
-                <button type="submit" class="btn btn-outline-dark px-4">Submit Request</button>
+
+                <button type="submit" class="btn btn-outline-dark px-4">
+                    Submit Request
+                </button>
             </form>
         </div>
     </div>
-
 {% endblock %}
