@@ -9,7 +9,7 @@
                 <div class="col-md-8 text-white">
                     <span class="section-label mb-2 d-block">Collection · {{ item['collectionName'] }}</span>
                     <h1 class="display-4">{{ item['itemTitle']}} </h1>
-                    <p class="subtitle">{{ item['communityName'] }} · {{ item['itemMediaType'] }} · {{ item['itemDate'] }}</p>
+                    <p class="subtitle">{{ item['communityName'] }} · {{ item['itemMediaType'] }}</p>
                     <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">Back to Collection</a>
                 </div>
             </div>
@@ -53,8 +53,8 @@
                     </tr>
                     <tr>
                         <td>
-                            <span class="meta-label">Date Recorded</span>
-                            <div class="meta-value">{{ item['itemDate'] }} · Duration 42 min</div>
+                            <span class="meta-label">Recorded Length</span>
+                            <div class="meta-value">Duration 42 min</div>
                         </td>
                     </tr>
                     <tr>
