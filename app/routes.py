@@ -30,14 +30,6 @@ def index():
         selected_category=category
     )
 
-@main_bp.route('/')
-def index():
-    items = models.get_all_items_with_metadata()
-    return render_template(
-        'index.html', 
-        items=items
-    )
-
 # add about page, no helper needed
 # @main_bp.route('/about')
 # def about():
