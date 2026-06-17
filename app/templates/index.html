@@ -2,31 +2,61 @@
 
 {% block title %}Home | Ngurra Digital Library{% endblock %}
 
-
 {% block hero %}
-    <!--- Bootstrap 5 Jumbotron for the Main Page -->
+    <!-- Bootstrap 5 Jumbotron for the Main Page -->
     <div class="p-5 mb-4 jumbotron-custom">
         <div class="container-fluid py-3">
             <h1 class="display-3">Custodians of<br/><em>Country &amp; Story</em></h1>
-            <p class="col-md-8 fs-4">A governed digital archive of Indigenous knowledges and cultural heritage materials — managed in partnership with a Community Elder Advisory Council under the CARE principles.</p>
+            <p class="col-md-8 fs-4">
+                A governed digital archive of Indigenous knowledges and cultural heritage materials — managed in partnership with a Community Elder Advisory Council under the CARE principles.
+            </p>
             <a href="#collection" class="btn btn-outline-dark mt-2 btn-custom">Browse Collection</a>
         </div>
     </div>
 {% endblock %}
 
-{% block content %}   
-    <!-- Acknowledgement of Country Banner-->
+{% block content %}
+
+    <!-- Acknowledgement of Country Banner -->
     <div class="container text-center my-4">
         <div class="py-3 px-5 text-dark">
             <span class="border-start border-danger ps-3">
                 <em>The Ngurra Digital Library acknowledges the Traditional Custodians of these lands and pays respect to Elders past, present, and emerging.</em>
-            </span>  
+            </span>
         </div>
     </div>
 
- 
     <div class="container mb-5" id="collection">
-        <p class="section-label mb-2">Featured Items</p>
+        <p class="section-label mb-2">Browse Collection</p>
+        
+        <!-- Search and filter form -->
+        <form method="GET" action="{{ url_for('main.index') }}" class="row g-3 mb-4">
+            <div class="col-md-6">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control" 
+                    placeholder="Search by title, description or cultural group"
+                    value="{{ search_query }}"
+                >
+            </div>
+
+            <div class="col-md-4">
+                <select name="category" class="form-select">
+                    <option value="">All categories</option>
+                    <option value="Photograph" {% if selected_category == "Photograph" %}selected{% endif %}>Photograph</option>
+                    <option value="Oral History" {% if selected_category == "Oral History" %}selected{% endif %}>Oral History</option>
+                    <option value="Document" {% if selected_category == "Document" %}selected{% endif %}>Document</option>
+                    <option value="Map" {% if selected_category == "Map" %}selected{% endif %}>Map</option>
+                    <option value="Ceremonial" {% if selected_category == "Ceremonial" %}selected{% endif %}>Ceremonial</option>
+                </select>
+            </div>
+
+             <div class="col-md-2">
+                <button type="submit" class="btn btn-dark w-100">Search</button>
+            </div>
+        </form>
+
         <div class="row">
             <!--- Starts the Loop --->
             {% for item in items %} 
@@ -46,4 +76,5 @@
             {% endfor %}
         </div>
     </div>
+
 {% endblock %}

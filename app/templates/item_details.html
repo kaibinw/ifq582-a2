@@ -17,22 +17,33 @@
     </div>
 {% endblock %}
 
+
 {% block content %}
     <div class="row">
-        
+
+        <!-- LEFT COLUMN: Item image / access status / metadata -->
         <div class="col-md-4 mb-4 mb-md-0">
-            <div class="thumb-approved mb-4">
-                Oral History Recording
-            </div>
-            
+
+            {% if item.access_level == "Public" %}
+                <div class="thumb-approved mb-4">
+                    {{ item.category }}
+                </div>
+            {% else %}
+                <div class="thumb-placeholder mb-4">
+                    Access Restricted
+                </div>
+            {% endif %}
+
             <table class="table table-metadata">
                 <tbody>
+
                     <tr>
                         <td>
                             <span class="meta-label">Access Status</span>
                             <div><span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mt-1">{{ item['itemStatus'] }}</span></div>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <span class="meta-label">Media Type</span>
@@ -51,22 +62,29 @@
                             <div class="meta-value">{{ item['itemLanguageGroup'] }}</div>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <span class="meta-label">Recorded Length</span>
                             <div class="meta-value">Duration 42 min</div>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <span class="meta-label">Sensitivity Level</span>
                             <div class="meta-value">{{ item['itemSensitivityLabel']}}</div>
                         </td>
                     </tr>
+
                 </tbody>
             </table>
         </div>
+
+
+        <!-- RIGHT COLUMN: Item details and request form -->
         <div class="col-md-8">
+
             <h2 class="display-5 mb-1">About this Item</h2>
             <hr class="accent-line mb-4">
             
@@ -85,24 +103,32 @@
             
             <h2 class="display-5 mb-1">Request to View at Library</h2>
             <hr class="accent-line mb-4">
-            <p class="text-muted small mb-4">To access the original recording in person, complete the form below. Library staff will respond within 5 business days.</p>
-            
+
+            <p class="text-muted small mb-4">
+                To request access to this item, complete the form below. Library staff will respond within 5 business days.
+            </p>
+
             <form>
                 <div class="form-group mb-3">
                     <label class="form-label">Full Name</label>
                     <input type="text" class="form-control" placeholder="Your full name">
                 </div>
+
                 <div class="form-group mb-3">
                     <label class="form-label">Email Address</label>
                     <input type="email" class="form-control" placeholder="your@email.com">
                 </div>
+
                 <div class="form-group mb-4">
                     <label class="form-label">Reason for Access</label>
                     <textarea class="form-control" rows="4" placeholder="Briefly describe your research purpose"></textarea>
                 </div>
-                <button type="submit" class="btn btn-outline-dark px-4">Submit Request</button>
+
+                <button type="submit" class="btn btn-outline-dark px-4">
+                    Submit Request
+                </button>
             </form>
+
         </div>
     </div>
-
 {% endblock %}
