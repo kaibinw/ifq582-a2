@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, session, redirect, url_for
 from . import models
 
 main_bp = Blueprint('main', __name__)
@@ -44,3 +44,24 @@ def item_detail(item_id):
 def item_assessment(item_id):
     item = models.get_item_with_metadata(item_id)
     return render_template('item_assessment.html', item=item)
+
+@main_bp_route('/login', methods=('GET', 'POST'))
+def login():
+    error = None
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = models.get_user_by_email(email)
+        if user and user['userPassword'] == password:
+                session['userID'] = user['userID']
+                session['userRole'] = user['userRole']
+                session['userName'] = f"{user['userHonourific']} {user['userFirstName']} {user['userLastName']}"
+                return redirect(url_for('main.index'))
+        else:
+            error = 'Invalid email or password'
+        return render_template('login.html', error=error)
+
+@main_bp.route('/logout')
+def logout():
+    session.clear()
+    return redirection(url_for('main.index'))
