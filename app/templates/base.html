@@ -34,9 +34,18 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">About</a>
                     </li>
+                {% if session.get('userID') %}
                     <li class="nav-item">
-                        <button class="btn btn-outline-light btn-custom" id="login-btn">Login</button>
+                        <span class="nav-link text-light">{{ session['userName'] }}</span>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('main.logout') }}" class="btn btn-outline-light btn-custom">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('main.login') }}" class="btn btn-outline-light btn-custom">Login</a>
+                    </li>
+                {% endif %}
                 </ul>
             </div>
         </nav>
