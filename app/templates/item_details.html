@@ -7,11 +7,14 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8 text-white">
+
                     <span class="section-label mb-2 d-block">
                         Collection · {{ item.category }}
                     </span>
 
-                    <h1 class="display-4">{{ item.title }}</h1>
+                    <h1 class="display-4">
+                        {{ item.title }}
+                    </h1>
 
                     <p class="subtitle">
                         {{ item.cultural_group }} · {{ item.category }} · {{ item.year }}
@@ -20,15 +23,18 @@
                     <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">
                         Back to Collection
                     </a>
+
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
 
+
 {% block content %}
     <div class="row">
 
+        <!-- LEFT COLUMN: Item image / access status / metadata -->
         <div class="col-md-4 mb-4 mb-md-0">
 
             {% if item.access_level == "Public" %}
@@ -43,6 +49,7 @@
 
             <table class="table table-metadata">
                 <tbody>
+
                     <tr>
                         <td>
                             <span class="meta-label">Access Status</span>
@@ -67,7 +74,7 @@
 
                     <tr>
                         <td>
-                            <span class="meta-label">Community of Origin</span>
+                            <span class="meta-label">Language Group</span>
                             <div class="meta-value">{{ item.cultural_group }}</div>
                         </td>
                     </tr>
@@ -85,11 +92,15 @@
                             <div class="meta-value">{{ item.sensitivity_level }}</div>
                         </td>
                     </tr>
+
                 </tbody>
             </table>
         </div>
 
+
+        <!-- RIGHT COLUMN: Item details and request form -->
         <div class="col-md-8">
+
             <h2 class="display-5 mb-1">About this Item</h2>
             <hr class="accent-line mb-4">
 
@@ -145,6 +156,7 @@
                     Submit Request
                 </button>
             </form>
+
         </div>
     </div>
 {% endblock %}
