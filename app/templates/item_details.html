@@ -1,29 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}{{ item.title }} | Ngurra Digital Library{% endblock %}
+{% block title %}{{ item['itemTitle'] }} | Ngurra Digital Library{% endblock %}
 
 {% block hero %}
     <div class="p-5 mb-4 rounded-3 jumbotron-custom">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8 text-white">
-
-                    <span class="section-label mb-2 d-block">
-                        Collection · {{ item.category }}
-                    </span>
-
-                    <h1 class="display-4">
-                        {{ item.title }}
-                    </h1>
-
-                    <p class="subtitle">
-                        {{ item.cultural_group }} · {{ item.category }} · {{ item.year }}
-                    </p>
-
-                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">
-                        Back to Collection
-                    </a>
-
+                    <span class="section-label mb-2 d-block">Collection · {{ item['collectionName'] }}</span>
+                    <h1 class="display-4">{{ item['itemTitle']}} </h1>
+                    <p class="subtitle">{{ item['communityName'] }} · {{ item['itemMediaType'] }}</p>
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">Back to Collection</a>
                 </div>
             </div>
         </div>
@@ -53,43 +40,40 @@
                     <tr>
                         <td>
                             <span class="meta-label">Access Status</span>
-                            <div>
-                                {% if item.review_status == "Approved" %}
-                                    <span class="badge text-bg-success mt-1">Approved</span>
-                                {% elif item.review_status == "Pending" %}
-                                    <span class="badge text-bg-warning mt-1">Pending Approval</span>
-                                {% else %}
-                                    <span class="badge text-bg-danger mt-1">Restricted</span>
-                                {% endif %}
-                            </div>
+                            <div><span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mt-1">{{ item['itemStatus'] }}</span></div>
                         </td>
                     </tr>
 
                     <tr>
                         <td>
                             <span class="meta-label">Media Type</span>
-                            <div class="meta-value">{{ item.category }}</div>
+                            <div class="meta-value">{{ item['itemMediaType'] }}</div>
                         </td>
                     </tr>
-
+                    <tr>
+                        <td>
+                            <span class="meta-label">Community of Origin</span>
+                            <div class="meta-value">{{ item['communityRegion'] }}, {{ item['communityName'] }}</div>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             <span class="meta-label">Language Group</span>
-                            <div class="meta-value">{{ item.cultural_group }}</div>
+                            <div class="meta-value">{{ item['itemLanguageGroup'] }}</div>
                         </td>
                     </tr>
 
                     <tr>
                         <td>
-                            <span class="meta-label">Date / Year</span>
-                            <div class="meta-value">{{ item.year }}</div>
+                            <span class="meta-label">Recorded Length</span>
+                            <div class="meta-value">Duration 42 min</div>
                         </td>
                     </tr>
 
                     <tr>
                         <td>
                             <span class="meta-label">Sensitivity Level</span>
-                            <div class="meta-value">{{ item.sensitivity_level }}</div>
+                            <div class="meta-value">{{ item['itemSensitivityLabel']}}</div>
                         </td>
                     </tr>
 
@@ -103,32 +87,20 @@
 
             <h2 class="display-5 mb-1">About this Item</h2>
             <hr class="accent-line mb-4">
-
-            {% if item.access_level == "Public" %}
-                <p class="item-description mb-4">
-                    {{ item.description }}
-                </p>
-            {% else %}
-                <div class="callout-box warning-box mb-4">
-                    This item has restricted access. Full details are limited due to cultural sensitivity.
-                </div>
-            {% endif %}
-
+            
+            <p class="item-description mb-4">
+                {{ item['itemDescription'] }}
+            </p>
+            
             <div class="callout-box note-box mb-3">
-                <strong>Cultural Note:</strong>
-                This item is managed under cultural access and review conditions.
+                <strong>Cultural Note:</strong> {{ item['itemCulturalNote'] }}
             </div>
-
-            {% if item.sensitivity_level == "High" %}
-                <div class="callout-box warning-box mb-5">
-                    ⚠ This item may contain culturally sensitive or restricted material.
-                </div>
-            {% elif item.review_status == "Pending" %}
-                <div class="callout-box warning-box mb-5">
-                    ⚠ This item is pending approval by the Elder Advisory Council.
-                </div>
+            {% if item['itemCulturalWarningFlag'] %}
+            <div class="callout-box warning-box mb-5">
+                ⚠ {{ item['itemCulturalWarningText'] }}
+            </div>
             {% endif %}
-
+            
             <h2 class="display-5 mb-1">Request to View at Library</h2>
             <hr class="accent-line mb-4">
 

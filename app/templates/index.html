@@ -28,7 +28,7 @@
 
     <div class="container mb-5" id="collection">
         <p class="section-label mb-2">Browse Collection</p>
-
+        
         <!-- Search and filter form -->
         <form method="GET" action="{{ url_for('main.index') }}" class="row g-3 mb-4">
             <div class="col-md-6">
@@ -52,54 +52,29 @@
                 </select>
             </div>
 
-            <div class="col-md-2">
+             <div class="col-md-2">
                 <button type="submit" class="btn btn-dark w-100">Search</button>
             </div>
         </form>
 
-        <!-- Collection items -->
-        {% if items %}
-            <div class="row">
-                {% for item in items %}
-                    <div class="col-sm-6 col-md-4 mb-4">
-                        <div class="card h-100">
-
-                            {% if item.access_level == "Public" %}
-                                <div class="thumb-approved">
-                                    <span class="mt-1">{{ item.category }}</span>
-                                </div>
-                            {% else %}
-                                <div class="thumb-placeholder">
-                                    <span class="mt-1">Access Restricted</span>
-                                </div>
-                            {% endif %}
-
-                            <div class="card-body">
-                                {% if item.review_status == "Approved" %}
-                                    <span class="badge text-bg-success mb-2">Approved</span>
-                                {% elif item.review_status == "Pending" %}
-                                    <span class="badge text-bg-warning mb-2">Pending Approval</span>
-                                {% else %}
-                                    <span class="badge text-bg-danger mb-2">Restricted</span>
-                                {% endif %}
-
-                                <h4 class="card-title">{{ item.title }}</h4>
-
-                                <p class="card-text">
-                                    {{ item.cultural_group }} · {{ item.category }} · {{ item.access_level }}
-                                </p>
-
-                                <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=item.id) }}"></a>
-                            </div>
-                        </div>
+        <div class="row">
+            <!--- Starts the Loop --->
+            {% for item in items %} 
+            <div class="col-sm-6 col-md-4">
+                <div class="card">
+                    <div class="{% if item['itemStatus'] == 'Approved' %}thumb-approved{% else %}thumb-placeholder{% endif %}">
+                        <span class="mt-1">{{ item['itemMediaType'] }}</span>
                     </div>
-                {% endfor %}
+                    <div class="card-body">
+                        <span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mb-2">{{ item['itemStatus'] }}</span>
+                        <h4 class="card-title">{{ item['itemTitle'] }}</h4>
+                            <p class="card-text">{{ item['itemDescription'] }}</p>
+                            <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=item['itemID'])}}"></a>
+                    </div>
+                </div>
             </div>
-        {% else %}
-            <div class="alert alert-warning">
-                No items found.
-            </div>
-        {% endif %}
+            {% endfor %}
+        </div>
     </div>
 
 {% endblock %}

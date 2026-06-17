@@ -17,291 +17,162 @@ Models:
 """
 
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
+from . import mysql
 
-db = SQLAlchemy()
-
+def get_cursor():
+    return mysql.connect.cursor()
 """
 Community Model
 
 Represents a cultural community in the Ngurra Library.
 One Community can have many Items and many Users (via UsersCommunity junction table)
 """
-class Community(db.Model):
-    __tablename__ = 'Community'
-    
-    communityID = db.Column(
-        db.Integer,
-        primary_key=True,
-        autoincrement=True
-    )
+def get_all_communities():
+    cursor = get_cursor()
+    sql = "SELECT communityID, communityName, communityRegion FROM Community"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
 
-    communityName = db.Column(
-        db.String(50),
-        nullable=False
-    )
+def get_collection_by_id(collection_id):
+    cursor = get_cursor()
+    sql = "SELECT collectionName, collectionShortName, collectionDateCreated FROM Collection WHERE collectionID = %s"
+    cursor.execute(sql, (collection_id,))
+    result = cursor.fetchone()
+    return result
 
-    communityRegion = db.Column(
-        db.String(50),
-        nullable=False
-    )
+def get_all_items_with_metadata():
+    cursor = get_cursor()
+    sql = """
+    SELECT 
+        i.itemID, i.itemTitle, i.itemDescription, i.itemImage, i.itemMediaType,
+        cm.itemStatus, cm.itemSensitivityLabel, cm.itemCulturalWarningFlag
+    FROM Item i
+    LEFT JOIN CulturalMetadata cm ON i.itemID = cm.itemID
+        """
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
 
-    # Many-to-many relationship: Community <-> Users
-    # via junction table: UsersCommunity
-    users = db.relationship(
-        'Users',
-        secondary='UsersCommunity',
-        backref='communities'
-    )
+def get_item_with_metadata(item_id):
+    cursor = get_cursor()
+    sql = """
+    SELECT 
+        i.itemID, i.itemTitle, i.itemDescription, i.itemImage, i.itemMediaType, i.collectionID, i.communityID, 
+        c.communityName, c.communityRegion,
+        col.collectionID, col.collectionName, col.collectionShortName, col.collectionDateCreated,
+        u.userHonourific, u.userFirstName, u.userLastName,
+        cm.metadataID, cm.itemStatus, cm.itemStatusHeader, cm.itemApprovalDate, cm.itemApproverID, cm.itemLanguageGroup, cm.itemCulturalNote, cm.itemSensitivityLabel,
+        cm.itemCulturalWarningFlag, cm.itemCulturalWarningText
+    FROM Item i
+    LEFT JOIN CulturalMetadata cm ON i.itemID = cm.itemID
+    LEFT JOIN Community c ON i.communityID = c.communityID
+    LEFT JOIN Collection col ON i.collectionID = col.collectionID
+    LEFT JOIN Users u ON cm.itemApproverID = u.userID
+    WHERE i.itemID = %s"""
+    cursor.execute(sql, (item_id,))
+    result = cursor.fetchone()
+    return result
 
-    # added for debugging - easy to see at a glance whether database is being pulled
-    def __repr__(self):
-        return f'<Community {self.communityID}: {self.communityName}>'
+def get_all_users():
+    """ Fetch ALL users"""
+    cursor = get_cursor()
+    sql = "SELECT userID, userHonourific, userLastName, userFirstName, userEmail, userRole, userPermissionLevel FROM Users"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+
+def get_user_by_id(user_id):
+    """ Fetch ONE user by their user ID"""
+    cursor = get_cursor()
+    sql = "SELECT userHonourific, userLastName, userFirstName, userEmail, userRole, userPermissionLevel, userPassword FROM Users WHERE userID = %s"
+    cursor.execute(sql, (user_id,))
+    result = cursor.fetchone()
+    return result
+
+def get_user_by_email(email): 
+    """ Fetch ONE user by their email"""
+    cursor = get_cursor()   
+    sql = "SELECT userHonourific, userLastName, userFirstName, userID, userRole, userPermissionLevel, userPassword FROM Users WHERE userEmail = %s"
+    cursor.execute(sql, (email,))
+    result = cursor.fetchone()
+    return result
+
+def get_community_by_id(community_id):
+    """ Fetch ONE community by its community ID"""
+    cursor = get_cursor()
+    sql = "SELECT communityName, communityRegion FROM Community WHERE communityID = %s"
+    cursor.execute(sql, (community_id,))
+    result = cursor.fetchone()
+    return result
+
+def get_communities_for_user(user_id):
+    "Fetch all communities for user by user ID"
+    cursor = get_cursor()
+    sql = "SELECT communityID FROM UsersCommunity WHERE userID = %s"
+    cursor.execute(sql, (user_id,))
+    results = cursor.fetchall()
+    return results
+
+def get_approvals_by_item_id(item_id):
+    """Fetch approvals by item ID"""
+    cursor = get_cursor()
+    sql = "SELECT approvalDiscussionID, approvalDiscussionText, approvalDiscussionDate, userID FROM ApprovalComment WHERE itemID = %s"
+    cursor.execute(sql, (item_id,))
+    result = cursor.fetchall()
+    return result
+
+def get_approvals_by_user_id(user_id):
+    """Fetch approvals by user ID"""
+    cursor = get_cursor()
+    sql = "SELECT approvalDiscussionID, approvalDiscussionText, approvalDiscussionDate, itemID FROM ApprovalComment WHERE userID = %s"
+    cursor.execute(sql, (user_id,))
+    result = cursor.fetchall()
+    return result
+
+def get_requests_by_user_id(user_id):
+    cursor = get_cursor()
+    sql = "SELECT requestID, requestReasonText, requestDate, requestStatus, itemID FROM ItemAccessRequest WHERE userID = %s"
+    cursor.execute(sql, (user_id,))
+    result = cursor.fetchall()
+    return result
+
+def get_requests_by_item_id(item_id):
+    cursor = get_cursor()
+    sql = "SELECT requestID, requestReasonText, requestDate, requestStatus, userID FROM ItemAccessRequest WHERE itemID = %s"
+    cursor.execute(sql, (item_id,))
+    result = cursor.fetchall()
+    return result
+
+def get_request_by_id(request_id):
+    cursor = get_cursor()
+    sql = "SELECT requestReasonText, requestDate, requestStatus, userID, itemID FROM ItemAccessRequest WHERE requestID = %s"
+    cursor.execute(sql, (request_id,))
+    result = cursor.fetchone()
+    return result
+
+def get_approval_by_id(access_approval_id):
+    cursor = get_cursor()
+    sql = "SELECT accessApprovalStatus, accessApprovalDate, requestID, approverID FROM ItemAccessApproval WHERE accessApprovalID = %s"
+    cursor.execute(sql, (access_approval_id,))
+    result = cursor.fetchone()
+    return result
+
 
 """
-Collection Model
-
-Represents a collection of items in the library. 
-"""
-class Collection(db.Model):
-    __tablename__ = 'Collection'
-
-    collectionID = db.Column(
-        db.Integer,
-        primary_key=True,
-        autoincrement=True
-    )
-
-    collectionName = db.Column(
-        db.String(250),
-        nullable=False
-    )
-
-    # pending values confirmation
-    # collectionStatus = db.Column(
-    #     db.Enum('Option A', 'Option B'),
-    #     nullable=False
-    # )
-
-    collectionDateCreated = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
-
-    # added for debugging - easy to see at a glance whether database is being pulled
-    def __repr__(self):
-        return f'<Collection {self.collectionID}: {self.collectionName}>'
-
-"""
-Users Model
-
-Represents all the users that are available for the library. 
-One User can have multiple communities (via UsersCommunity junction table)
-"""
-class Users(db.Model):
-    __tablename__ = 'Users'
-
-    userID = db.Column(
-        db.Integer,
-        primary_key=True,
-        autoincrement=True
-    )
-
-    userHonourific = db.Column(
-        db.String(50),
-        nullable=True
-    )
-    
-    userLastName = db.Column(
-        db.String(50),
-        nullable=False
-    )
-    
-    userFirstName = db.Column(
-        db.String(50),
-        nullable=False
-    )
-    
-    userEmail = db.Column(
-        db.String(50),
-        nullable=False
-    )
-    
-    userRole = db.Column(
-        db.Enum('Curator', 'Elder', 'Public', 'Admin'),
-        nullable=False
-    )
-    
-    userPermissionLevel = db.Column(
-        db.Integer,
-        nullable=False
-    )
-    
-    userPassword = db.Column(
-        db.String(60), # password must be bcrypt hash, 60 chars
-        nullable=False
-    )
-
-    # represents the many-to-many Community <-> Users relationship. 
-    # via junction table
-    communities = db.relationship(
-        'Community',
-        secondary='UsersCommunity',
-        backref='users'
-    )
-
-    # added for debugging - easy to see at a glance whether database is being pulled
-    def __repr__(self):
-        return f'<User {self.userID}: {self.userEmail}>'
-
-"""
-Item Model
-
-All the library items
-Items in the library can be in many collections and community
+PENDING request for more helpers
 """
 
-class Item(db.Model):
-    __tablename__ = 'Item'
-    
-    itemID = db.Column(
-        db.Integer,
-        autoincrement=True,
-        primary_key=True
-    )
-    
-    collectionID = db.Column(
-        db.Integer,
-        db.ForeignKey('Collection.collectionID'),
-        nullable=False
-    )
-    
-    communityID = db.Column(
-        db.Integer,
-        db.ForeignKey('Community.communityID'),
-        nullable=False        
-    )
-    
-    itemTitle = db.Column(
-        db.String(50),
-        nullable=False
-    )
-    
-    itemDescription = db.Column(
-        db.String(250),
-        nullable=False
-    )
-    
-    itemImage = db.Column(
-        db.String(50), # - placeholder for now, pending SQL fix for image files.
-        nullable=True
-    )
-    
-    itemMediaType = db.Column(
-        db.String(50),
-        nullable=False
-    )
-
-    collection = db.relationship('Collection', backref='items')
-    community = db.relationship('Community', backref='items')
-
-    # added for debugging - easy to see at a glance whether database is being pulled
-    def __repr__(self):
-        return f'<Items: {self.itemID}: {self.itemTitle}>'    
-
-"""
-Cultural Metadata Model
-
-Contains all the cultural metadata for the items in the library. 
-"""
-
-class CulturalMetadata(db.Model):
-    __tablename__ = 'CulturalMetadata'
-
-    metadataID = db.Column(
-        db.Integer,
-        autoincrement=True,
-        primary_key=True
-    )
-
-    itemID = db.Column(
-        db.Integer,
-        db.ForeignKey('Item.itemID'),
-        nullable=False
-    )
-
-    itemStatus = db.Column(
-        db.Enum('Approved', 'Restricted', 'Pending Approval'),
-        nullable=False
-    )
-
-    itemApprovalDate = db.Column(
-        db.DateTime,
-        default=datetime.utcnow,
-        nullable=True
-    )
-
-    # pending confirmation if item created date is needed.
-    # itemCreatedDate = db.Column(
-    #     db.DateTime
-    #     default=datetime.utcnow
-    #     nullable=True
-    # )
-
-    itemApproverID = db.Column(
-        db.Integer,
-        db.ForeignKey('Users.userID'),
-        nullable=True
-    )
-
-    itemLanguageGroup = db.Column(
-        db.String(50),
-        nullable=False
-    )
-
-    itemSensitivityLabel = db.Column(
-        db.Enum('Low', 'Moderate', 'High'),
-        default='Moderate',
-        nullable=True
-    )
-
-    itemCulturalWarningFlag = db.Column(
-        db.Boolean,
-        nullable=False
-    )
-
-    itemCulturalWarningText = db.Column(
-        db.String(250),
-        nullable=True
-    )
-
-    item = db.relationship('Item', backref='culturalmetadata')
-    user = db.relationship('Users', backref='culturalmetadata')
-
-    # added for debugging - easy to see at a glance whether database is being pulled
-    def __repr__(self):
-        return f'<CulturalMetadata: {self.metadataID}: {self.itemID}, {self.itemStatus}>'
-
-
-
-class UsersCommunity(db.Model):
-    __tablename__ = 'UsersCommunity'
-
-    userID = db.Column(
-        db.Integer,
-        db.ForeignKey('Users.userID'),
-        primary_key=True
-    )
-    
-    communityID = db.Column(
-        db.Integer,
-        db.ForeignKey('Community.communityID'),
-        primary_key=True
-    )
-
-    # added for debugging - easy to see at a glance whether database is being pulled
-    def __repr__(self):
-        return f'<UserCommunity: User {self.userID} ↔ Community {self.communityID}>'
-
-
-
+# def get_approval_statuses_by_approver_id(approver_id):
+#     cursor = get_cursor()
+#     sql = "SELECT accessApprovalStatus, accessApprovalDate, requestID, access_approval_id FROM ItemAccessApproval WHERE approver_id = %s"
+#     cursor.execute(sql, (approver_id,))
+#     result = cursor.fetchall()
+#     return result
+# 
+# def get_approval_status_by_id(request_id):
+#     cursor = get_cursor()
+#     sql = "SELECT accessApprovalStatus, accessApprovalDate, approverID, accessApprovalID FROM ItemAccessApproval WHERE request_ID = %s"
+#     cursor.execute(sql, (approver_id,))
+#     result = cursor.fetchone()
+#     return result
