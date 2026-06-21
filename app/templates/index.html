@@ -28,51 +28,140 @@
 
     <div class="container mb-5" id="collection">
         <p class="section-label mb-2">Browse Collection</p>
-        
+
         <!-- Search and filter form -->
         <form method="GET" action="{{ url_for('main.index') }}" class="row g-3 mb-4">
-            <div class="col-md-6">
+
+            <!-- Search box -->
+            <div class="col-md-4">
                 <input 
                     type="text" 
                     name="q" 
                     class="form-control" 
-                    placeholder="Search by title, description or cultural group"
+                    placeholder="Search by title, description, community or collection"
                     value="{{ search_query }}"
                 >
             </div>
 
-            <div class="col-md-4">
+            <!-- Media type filter -->
+            <div class="col-md-2">
                 <select name="category" class="form-select">
-                    <option value="">All categories</option>
+                    <option value="">All media types</option>
+                    <option value="Audio Recording" {% if selected_category == "Audio Recording" %}selected{% endif %}>Audio Recording</option>
                     <option value="Photograph" {% if selected_category == "Photograph" %}selected{% endif %}>Photograph</option>
-                    <option value="Oral History" {% if selected_category == "Oral History" %}selected{% endif %}>Oral History</option>
-                    <option value="Document" {% if selected_category == "Document" %}selected{% endif %}>Document</option>
                     <option value="Map" {% if selected_category == "Map" %}selected{% endif %}>Map</option>
-                    <option value="Ceremonial" {% if selected_category == "Ceremonial" %}selected{% endif %}>Ceremonial</option>
                 </select>
             </div>
 
-             <div class="col-md-2">
+            <!-- Community filter -->
+            <div class="col-md-2">
+                <select name="community" class="form-select">
+                    <option value="">All communities</option>
+                    <option value="Yuggera" {% if selected_community == "Yuggera" %}selected{% endif %}>Yuggera</option>
+                    <option value="Waka Waka" {% if selected_community == "Waka Waka" %}selected{% endif %}>Waka Waka</option>
+                    <option value="Gugu Badhun" {% if selected_community == "Gugu Badhun" %}selected{% endif %}>Gugu Badhun</option>
+                    <option value="Kalkadoon" {% if selected_community == "Kalkadoon" %}selected{% endif %}>Kalkadoon</option>
+                    <option value="Gubbi Gubbi" {% if selected_community == "Gubbi Gubbi" %}selected{% endif %}>Gubbi Gubbi</option>
+                    <option value="Butchulla" {% if selected_community == "Butchulla" %}selected{% endif %}>Butchulla</option>
+                    <option value="Jirrbal" {% if selected_community == "Jirrbal" %}selected{% endif %}>Jirrbal</option>
+                    <option value="Wulgurukaba" {% if selected_community == "Wulgurukaba" %}selected{% endif %}>Wulgurukaba</option>
+                    <option value="Yidinji" {% if selected_community == "Yidinji" %}selected{% endif %}>Yidinji</option>
+                    <option value="Iningai" {% if selected_community == "Iningai" %}selected{% endif %}>Iningai</option>
+                    <option value="Bidjara" {% if selected_community == "Bidjara" %}selected{% endif %}>Bidjara</option>
+                    <option value="Kullilli" {% if selected_community == "Kullilli" %}selected{% endif %}>Kullilli</option>
+                    <option value="Wakaman" {% if selected_community == "Wakaman" %}selected{% endif %}>Wakaman</option>
+                    <option value="Barunggam" {% if selected_community == "Barunggam" %}selected{% endif %}>Barunggam</option>
+                </select>
+            </div>
+
+            <!-- Access status filter -->
+            <div class="col-md-2">
+                <select name="access_status" class="form-select">
+                    <option value="">All access</option>
+                    <option value="Approve for Public Access" {% if selected_access_status == "Approve for Public Access" %}selected{% endif %}>Public Access</option>
+                    <option value="Restrict - Community Only" {% if selected_access_status == "Restrict - Community Only" %}selected{% endif %}>Community Only</option>
+                    <option value="Pending Approval" {% if selected_access_status == "Pending Approval" %}selected{% endif %}>Pending Approval</option>
+                    <option value="Reject" {% if selected_access_status == "Reject" %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+
+            <!-- Sensitivity filter -->
+            <div class="col-md-1">
+                <select name="sensitivity" class="form-select">
+                    <option value="">All</option>
+                    <option value="Low" {% if selected_sensitivity == "Low" %}selected{% endif %}>Low</option>
+                    <option value="Moderate" {% if selected_sensitivity == "Moderate" %}selected{% endif %}>Moderate</option>
+                    <option value="High" {% if selected_sensitivity == "High" %}selected{% endif %}>High</option>
+                </select>
+            </div>
+
+            <!-- Search button -->
+            <div class="col-md-1">
                 <button type="submit" class="btn btn-dark w-100">Search</button>
             </div>
         </form>
 
+        <!-- Items cards -->
         <div class="row">
-            <!--- Starts the Loop --->
-            {% for item in items %} 
-            <div class="col-sm-6 col-md-4">
-                <div class="card">
-                    <div class="{% if item['itemStatus'] == 'Approved' %}thumb-approved{% else %}thumb-placeholder{% endif %}">
-                        <span class="mt-1">{{ item['itemMediaType'] }}</span>
-                    </div>
-                    <div class="card-body">
-                        <span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mb-2">{{ item['itemStatus'] }}</span>
-                        <h4 class="card-title">{{ item['itemTitle'] }}</h4>
-                            <p class="card-text">{{ item['itemDescription'] }}</p>
-                            <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=item['itemID'])}}"></a>
+            {% for item in items %}
+                <div class="col-sm-6 col-md-4 mb-4">
+                    <div class="card h-100">
+
+                        <div class="{% if item['itemStatus'] == 'Approve for Public Access' %}thumb-approved{% else %}thumb-placeholder{% endif %}">
+                            <span class="mt-1">{{ item['itemMediaType'] }}</span>
+                        </div>
+
+                        <div class="card-body">
+
+                            {% if item['itemStatus'] == 'Approve for Public Access' %}
+                                <span class="badge text-bg-success mb-2">Public Access</span>
+                            {% elif item['itemStatus'] == 'Restrict - Community Only' %}
+                                <span class="badge text-bg-danger mb-2">Community Only</span>
+                            {% elif item['itemStatus'] == 'Pending Approval' %}
+                                <span class="badge text-bg-warning mb-2">Pending Approval</span>
+                            {% elif item['itemStatus'] == 'Reject' %}
+                                <span class="badge text-bg-secondary mb-2">Rejected</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary mb-2">Under Review</span>
+                            {% endif %}
+
+                            <h4 class="card-title">{{ item['itemTitle'] }}</h4>
+
+                            <p class="card-text">
+                                {{ item['itemDescription'] }}
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Community:</strong> {{ item['communityName'] }}
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Collection:</strong> {{ item['collectionShortName'] }}
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Sensitivity:</strong>
+                                {% if item['itemSensitivityLabel'] %}
+                                    {{ item['itemSensitivityLabel'] }}
+                                {% else %}
+                                    Under review
+                                {% endif %}
+                            </p>
+
+                            {% if item['itemCulturalWarningFlag'] %}
+                                <p class="text-danger mb-1">
+                                    <strong>Cultural warning applies</strong>
+                                </p>
+                            {% endif %}
+
+                            <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=item['itemID']) }}"></a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% else %}
+                <div class="col-12">
+                    <p>No items found matching your search or filters.</p>
+                </div>
             {% endfor %}
         </div>
     </div>
