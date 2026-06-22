@@ -12,7 +12,7 @@ def admin_required(f):
         if session.get('userRole') != 'Admin':
             return render_template('error.html',
                                     code=403,
-                                    message='Access denied. Admin privileges required'), 403
+                                    message='Access denied. Admin privileges required.'), 403
         return f(*args, **kwargs)
     return decorated_function
 
@@ -22,7 +22,7 @@ def elder_required(f):
         if not session.get('userID'):
             return redirect(url_for('main.login'))
         if session.get('userRole') not in ('Elder', 'Admin'):
-            return render_template('error.html'
+            return render_template('error.html',
                                     code=403,
                                     message='Access denied. Elder or Admin privileges required.'), 403
         return f(*args, **kwargs)
@@ -49,6 +49,13 @@ def index():
     sensitivity = request.args.get('sensitivity', '')
 
     items = models.get_all_items_with_metadata()
+
+    user_role = session.get('userRole', 'Public')
+    if user_role == 'Public':
+        items = [
+            item for item in items
+            if item.get('itemStatus') in ('Approve for Public Access',)
+        ]
 
     if search_query:
         items = [
