@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Error {{ code }}| Ngurra Digital Library{% endblock %}
+
+{% block hero %}
+    <!-- Bootstrap 5 Jumbotron for the Main Page -->
+    <div class="p-5 mb-4 jumbotron-custom">
+        <div class="container">
+            <div class="col-md-8 text-white">
+                <h1 class="display-3">Error {{ code }}</h1>
+                <p class="subtitle">{{ message }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <p class="text-muted mb-4">
+                The page you're looking for doesn't exist or you don't have permission to access it. 
+            </p>
+            <a href="{{ url_for('main.index') }}" class="btn btn-dark">Back to Home</a>
+        </div>
+    </div>
+[% endblock %]

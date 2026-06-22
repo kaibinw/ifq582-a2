@@ -1,8 +1,44 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from . import models
+from functools import wraps
 
 main_bp = Blueprint('main', __name__)
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('userID'):
+            return redirect(url_for('main.login'))
+        if session.get('userRole') != 'Admin':
+            return render_template('error.html',
+                                    code=403,
+                                    message='Access denied. Admin privileges required'), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+def elder_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('userID'):
+            return redirect(url_for('main.login'))
+        if session.get('userRole') not in ('Elder', 'Admin'):
+            return render_template('error.html'
+                                    code=403,
+                                    message='Access denied. Elder or Admin privileges required.'), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+def curator_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('userID'):
+            return redirect(url_for('main.login'))
+        if session.get('userRole') not in ('Curator', 'Admin'):
+            return render_template('error.html',
+                                    code=403,
+                                    message='Access denied. Curator or Admin privileges required.'), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 @main_bp.route('/')
 def index():
@@ -71,6 +107,7 @@ def item_detail(item_id):
 
 
 @main_bp.route('/assessment/<int:item_id>')
+@elder_required
 def item_assessment(item_id):
     item = models.get_item_with_metadata(item_id)
     return render_template('item_assessment.html', item=item)
