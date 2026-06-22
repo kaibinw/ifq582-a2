@@ -40,7 +40,16 @@
                     <tr>
                         <td>
                             <span class="meta-label">Access Status</span>
-                            <div><span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mt-1">{{ item['itemStatus'] }}</span></div>
+                            <div>
+                                <span class="badge 
+                                        {% if item['itemStatus'] == 'Approve for Public Access' %}text-bg-success
+                                        {% elif item['itemStatus'] =='Restrict - Community Only' %}text-bg-danger
+                                        {% elif item['itemStatus'] == 'Pending Approval' %}text-bg-warning
+                                        {% else %}text-bg-secondary
+                                        {% endif %} 
+                                        mt-1">{{ item['itemStatus'] }}
+                                </span>
+                            </div>
                         </td>
                     </tr>
 
