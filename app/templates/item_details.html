@@ -119,13 +119,18 @@
 
             <form method="POST" action="{{ url_for('main.item_request', item_id=item['itemID']) }}">
                 <div class="form-group mb-3">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" name="full_name" class="form-control" placeholder="Your full name" value="{{ session.get('userName', '') }}">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="first_name" class="form-control" placeholder="Your first name" value="{{ session.get('userFirstName', '') }}">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="last_name" class="form-control" placeholder="Your last name" value="{{ session.get('userLastName', '') }}">
                 </div>
 
                 <div class="form-group mb-3">
                     <label class="form-label">Email Address</label>
-                    <input type="email" name="email" class="form-control" placeholder="your@email.com">
+                    <input type="email" name="email" class="form-control" placeholder="your@email.com" value="{{ session.get('userEmail', '')}}">
                 </div>
 
                 <div class="form-group mb-4">

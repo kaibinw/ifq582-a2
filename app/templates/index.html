@@ -73,7 +73,9 @@
                     <option value="Barunggam" {% if selected_community == "Barunggam" %}selected{% endif %}>Barunggam</option>
                 </select>
             </div>
-
+        
+        <!-- Public just sees Approved items -->    
+        {% if session.get('userRole') in ('Elder', 'Admin', 'Curator') %}
             <!-- Access status filter -->
             <div class="col-md-2">
                 <select name="access_status" class="form-select">
@@ -84,16 +86,20 @@
                     <option value="Reject" {% if selected_access_status == "Reject" %}selected{% endif %}>Rejected</option>
                 </select>
             </div>
-
+        
             <!-- Sensitivity filter -->
             <div class="col-md-1">
                 <select name="sensitivity" class="form-select">
                     <option value="">All</option>
                     <option value="Low" {% if selected_sensitivity == "Low" %}selected{% endif %}>Low</option>
                     <option value="Moderate" {% if selected_sensitivity == "Moderate" %}selected{% endif %}>Moderate</option>
+                    <!-- Curators don't get to see High filter anyway -->
+                    {% if session.get('userRole') in ('Elder', 'Admin') %}
                     <option value="High" {% if selected_sensitivity == "High" %}selected{% endif %}>High</option>
+                    {% endif %}
                 </select>
             </div>
+        {% endif %}
 
             <!-- Search button -->
             <div class="col-md-1">
@@ -154,7 +160,11 @@
                                 </p>
                             {% endif %}
 
-                            <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=item['itemID']) }}"></a>
+                            {% if session.get('userRole') in ('Elder', 'Admin') and item['itemStatus'] in ('Pending Approval', 'Restrict - Community Only') %}
+                                <a href="{{ url_for('main.item_assessment', item_id=item['itemID']) }}" class="stretched-link"></a>
+                            {% else %}
+                                <a href="{{ url_for('main.item_detail', item_id=item['itemID']) }}" class="stretched-link"></a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

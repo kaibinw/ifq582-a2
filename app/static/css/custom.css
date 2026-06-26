@@ -7,7 +7,7 @@
   --earth: #447859;
   --burntorange: #c3751d;
   --brown: #A0622A;
-  --olivebrown: #4e3a1b; 
+  --olivebrown: #4d3d25; 
   --slateblue: #5c8aca; 
   --maroon: #5D100A;
 }
@@ -67,6 +67,7 @@ html {
 .thumb-placeholder { 
   height:140px; 
   background:var(--charcoal); 
+  border: 1px solid var(--burntorange);
   display:flex; 
   align-items:center; 
   justify-content:center; 
@@ -80,6 +81,7 @@ html {
 .thumb-approved { 
   height:140px; 
   background:var(--sand); 
+  border: 1px solid var(--earth);
   display:flex; 
   align-items:center; 
   justify-content:center; 
@@ -107,16 +109,30 @@ html {
   font-size: 0.8rem;
 }
 
+.table-metadata {
+  background-color: transparent;
+}
+
+.table-metadata tbody tr {
+  background-color: transparent;
+}
+
+.table-metadata tbody td {
+  background-color: transparent;
+  border-color: var(--sand);
+}
+
 .meta-label {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--brown);
+  color: var(--olivebrown);
 }
 
 .meta-value {
-  font-size: .8rem;
-  font-weight: 300;
+  font-size: .9rem;
+  font-weight: 400;
   color: var(--charcoal);
+  font-style: italic;
 }
 
 .display-4 {
@@ -160,9 +176,10 @@ html {
 }
 
 .form-control {
-  background-color: var(--sand) !important;
+  background-color: color-mix(in srgb, var(--sand) 76%, #f5f2f2) !important;
+  font-weight: 400;
   border-color: var(--charcoal);
-  color: var(--charcoal) !important;
+  color: var(--black) !important;
 }
 
 .form-control:focus {
@@ -172,7 +189,12 @@ html {
 .form-control::placeholder {
   color: var(--charcoal) !important;
   font-style: italic;
-  opacity: 9.7;
+  opacity: 0.97;
+}
+
+#search-form .form-control {
+  background-color: color-mix(in srgb, var(--sand) 76%, #f5f2f2) !important;
+  border: 2px solid var(--earth) !important;
 }
 
 .panel-title {

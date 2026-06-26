@@ -7,10 +7,10 @@ A Flask web application for managing Indigenous cultural heritage under CARE Pri
 1. Clone the repo
 2. `python -m venv venv`
 3. `source venv/bin/activate`  (Mac/Linux) or `venv\Scripts\activate` (Windows)
-4. `pip install -r requirements.txt`
-5. Open MySQL Workbench, run 'data.sql' to create and seed the database
-6. Update 'config.py' with your MySQL username and password
-7. `python run.py` → visit `http://localhost:5000`
+4. Open MySQL Workbench, run data.sql to create IFQ582 database
+5. Update config.py with your MySQL username and password
+6. pip install -r requirements.txt
+7. python run.py → visit http://localhost:5000
 
 `git pull` 
 run this whenever you start work to get everyone's latest commits. 
