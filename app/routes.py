@@ -112,6 +112,18 @@ def item_detail(item_id):
     item = models.get_item_with_metadata(item_id)
     return render_template('item_details.html', item=item)
 
+@main_bp.route('/request/<int:item_id>', methods=['POST'])
+def item_request(item_id):
+    if not session.get('userID'):
+        return redirect(url_for('main.login'))
+    
+    full_name = request.form.get('full_name')
+    email = request.form.get('email')
+    reason = request.form.get('reason')
+
+    models.create_access_request(session['userID'], item_id, reason)
+
+    return redirect(url_for('main.item_detail', item_id=item_id))
 
 @main_bp.route('/assessment/<int:item_id>')
 @elder_required

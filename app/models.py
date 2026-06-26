@@ -387,10 +387,21 @@ def get_approval_by_id(access_approval_id):
     result = cursor.fetchone()
     return result
 
+def create_access_request(user_id, item_id, reason_text):
+    cursor = get_cursor()
+    sql = """
+    INSERT INTO ItemAccessRequest (userID, itemID, requestReasonText, requestStatus)
+    VALUES (%s, %s, %s, 'Open')
+    """
+    cursor.execute(sql, (user_id, item_id, reason_text))
+    mysql.connect.commit()
+    return True
+
 
 """
 Pending helpers for future development
 """
+
 
 # def get_approval_statuses_by_approver_id(approver_id):
 #     cursor = get_cursor()
