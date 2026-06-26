@@ -16,7 +16,11 @@
 
                 <div class="col-md-8 text-white">
                     <span class="section-label mb-2 d-block">Assessment · {{ item['itemTitle'] }}</span>
-                    <h1 class="display-6">{{ item['itemTitle'] }} - {{ item['userHonourific'] }} {{ item['userFirstName']}} {{ item['userLastName'] }}</h1>
+                    {% if item['userFirstName'] %}    
+                        <h1 class="display-6">{{ item['itemTitle'] }} - {{ item['userHonourific'] }} {{ item['userFirstName']}} {{ item['userLastName'] }}</h1>
+                    {% else %}
+                        <h1 class="display-6">{{ item['itemTitle'] }} - Pending Approval</h1>
+                    {% endif %}
                 </div>
 
             </div>
@@ -85,7 +89,7 @@
                 <form>
                     <div class="form-group">
                         <label class="meta-label">Sensitivity Level</label>
-                        <select class="form-control">
+                        <select class="form-control" name="sensitivity">
                             <option>Low</option>
                             <option>Moderate</option>
                             <option>High / Restricted</option>
@@ -93,7 +97,7 @@
                     </div>
                     <div class="form-group">
                         <label class="meta-label">Cultural Warning</label>
-                        <select class="form-control">
+                        <select class="form-control" name="cultural_warning">
                             <option>No warning required</option>
                             <option>May contain content of sensitive nature</option>
                             <option>Contains ceremonial content restricted to initiated members</option>
@@ -101,7 +105,7 @@
                     </div>
                     <div class="form-group">
                         <label class="meta-label">Assessment Notes</label>
-                        <textarea class="form-control" rows="4" placeholder="Add notes on cultural significance or access recommendations"></textarea>
+                        <textarea class="form-control" name="assessment_notes" rows="4" placeholder="Add notes on cultural significance or access recommendations"></textarea>
                     </div>
                 </form>
             </div>
@@ -145,3 +149,29 @@
         
     </div>
 {% endblock %}
+
+<script>
+    // Auto-update Cultural Warning based on Sensitivity Level
+    document.querySelector('select[name="sensitivity"]').addEventListener('change', function() {
+        const sensitivitySelect = document.querySelector('select[name="sensitivity"]');
+        const warningSelect = document.querySelector('select[name="cultural_warning"]');
+
+        const sensitivityMap = {
+            'Low': 'No warning required',
+            'Moderate': 'May contain content of sensitive nature',
+            'High / Restricted': 'Contains ceremonial content restricted to initiated members'
+        };
+
+        const selectedSensitivity = sensitivitySelect.value;
+        const correspondingWarning = sensitivityMap[selectedSensitivity];
+
+        if (correspondingWarning) {
+            for (let option of warningSelect.options) {
+                if (option.text === correspondingWarning) {
+                    warningSelect.value = option.value;
+                    break;
+                }
+            }
+        }
+    });
+</script>

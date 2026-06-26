@@ -49,6 +49,7 @@ def index():
     sensitivity = request.args.get('sensitivity', '')
 
     items = models.get_all_items_with_metadata()
+    items = list(items)
 
     user_role = session.get('userRole', 'Public')
     if user_role == 'Public':
@@ -56,7 +57,26 @@ def index():
             item for item in items
             if item.get('itemStatus') in ('Approve for Public Access',)
         ]
+    
+    if user_role == 'Curator':
+        items = [
+            item for item in items
+            if item.get('itemSensitivityLabel') in ('Low', 'Moderate')
+        ]
+        # Curators cannot access High Sensitivity items
 
+    # sorts the index by collection, then status (pending for Elder/Admin first, then date)
+    if user_role in ('Elder', 'Admin'):
+        items.sort(key=lambda x: (
+            x.get('collectionName', ''),
+            x['itemStatus'] != 'Pending Approval',
+            x['itemDate']
+        ))
+    else:
+        items.sort(key=lambda x: (
+            x.get('collectionName', ''),
+            x['itemDate']
+        ))
     if search_query:
         items = [
             item for item in items
@@ -117,7 +137,8 @@ def item_request(item_id):
     if not session.get('userID'):
         return redirect(url_for('main.login'))
     
-    full_name = request.form.get('full_name')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
     email = request.form.get('email')
     reason = request.form.get('reason')
 
@@ -146,6 +167,9 @@ def login():
             session['userID'] = user['userID']
             session['userRole'] = user['userRole']
             session['userName'] = f"{user['userHonourific'] + ' ' if user['userHonourific'] else ''}{user['userFirstName']} {user['userLastName']}"
+            session['userEmail'] = user['userEmail']
+            session['userFirstName'] = user['userFirstName']
+            session['userLastName'] = user['userLastName']
             return redirect(url_for('main.index'))
         else:
             error = 'Invalid email or password'
