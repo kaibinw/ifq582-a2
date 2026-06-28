@@ -171,3 +171,29 @@
 
 </div>
 {% endblock %}
+
+<script>
+    // Auto-update Cultural Warning based on Sensitivity Level
+    document.querySelector('select[name="sensitivity"]').addEventListener('change', function() {
+        const sensitivitySelect = document.querySelector('select[name="sensitivity"]');
+        const warningSelect = document.querySelector('select[name="cultural_warning"]');
+
+        const sensitivityMap = {
+            'Low': 'No warning required',
+            'Moderate': 'May contain content of sensitive nature',
+            'High / Restricted': 'Contains ceremonial content restricted to initiated members'
+        };
+
+        const selectedSensitivity = sensitivitySelect.value;
+        const correspondingWarning = sensitivityMap[selectedSensitivity];
+
+        if (correspondingWarning) {
+            for (let option of warningSelect.options) {
+                if (option.text === correspondingWarning) {
+                    warningSelect.value = option.value;
+                    break;
+                }
+            }
+        }
+    });
+</script>

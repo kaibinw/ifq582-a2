@@ -1,12 +1,125 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, abort
 from . import models
+from functools import wraps
 
 main_bp = Blueprint('main', __name__)
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('userID'):
+            return redirect(url_for('main.login'))
+        if session.get('userRole') != 'Admin':
+            return render_template('error.html',
+                                    code=403,
+                                    message='Access denied. Admin privileges required.'), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+def elder_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('userID'):
+            return redirect(url_for('main.login'))
+        if session.get('userRole') not in ('Elder', 'Admin'):
+            return render_template('error.html',
+                                    code=403,
+                                    message='Access denied. Elder or Admin privileges required.'), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+def curator_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('userID'):
+            return redirect(url_for('main.login'))
+        if session.get('userRole') not in ('Curator', 'Admin'):
+            return render_template('error.html',
+                                    code=403,
+                                    message='Access denied. Curator or Admin privileges required.'), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
 @main_bp.route('/')
 def index():
+    search_query = request.args.get('q', '').lower()
+    category = request.args.get('category', '')
+    community = request.args.get('community', '')
+    access_status = request.args.get('access_status', '')
+    sensitivity = request.args.get('sensitivity', '')
+
     items = models.get_all_items_with_metadata()
-    return render_template('index.html', items=items)
+    items = list(items)
+
+    user_role = session.get('userRole', 'Public')
+    if user_role == 'Public':
+        items = [
+            item for item in items
+            if item.get('itemStatus') in ('Approve for Public Access',)
+        ]
+    
+    if user_role == 'Curator':
+        items = [
+            item for item in items
+            if item.get('itemSensitivityLabel') in ('Low', 'Moderate')
+        ]
+        # Curators cannot access High Sensitivity items
+
+    # sorts the index by collection, then status (pending for Elder/Admin first, then date)
+    if user_role in ('Elder', 'Admin'):
+        items.sort(key=lambda x: (
+            x.get('collectionName', ''),
+            x['itemStatus'] != 'Pending Approval',
+            x['itemDate']
+        ))
+    else:
+        items.sort(key=lambda x: (
+            x.get('collectionName', ''),
+            x['itemDate']
+        ))
+    if search_query:
+        items = [
+            item for item in items
+            if search_query in item['itemTitle'].lower()
+            or search_query in item['itemDescription'].lower()
+            or search_query in item.get('communityName', '').lower()
+            or search_query in item.get('collectionName', '').lower()
+        ]
+
+    if category:
+        items = [
+            item for item in items
+            if item['itemMediaType'] == category
+        ]
+
+    if community:
+        items = [
+            item for item in items
+            if item.get('communityName') == community
+        ]
+
+    if access_status:
+        items = [
+            item for item in items
+            if item.get('itemStatus') == access_status
+        ]
+
+    if sensitivity:
+        items = [
+            item for item in items
+            if item.get('itemSensitivityLabel') == sensitivity
+        ]
+
+    return render_template(
+        'index.html',
+        items=items,
+        search_query=search_query,
+        selected_category=category,
+        selected_community=community,
+        selected_access_status=access_status,
+        selected_sensitivity=sensitivity
+    )
+
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -41,7 +154,22 @@ def item_detail(item_id):
         abort(404)
     return render_template('item_details.html', item=item)
 
+@main_bp.route('/request/<int:item_id>', methods=['POST'])
+def item_request(item_id):
+    if not session.get('userID'):
+        return redirect(url_for('main.login'))
+    
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    email = request.form.get('email')
+    reason = request.form.get('reason')
+
+    models.create_access_request(session['userID'], item_id, reason)
+
+    return redirect(url_for('main.item_detail', item_id=item_id))
+
 @main_bp.route('/assessment/<int:item_id>')
+@elder_required
 def item_assessment(item_id):
     # Ensure user is logged in
     if not session.get('user_id'):
@@ -126,4 +254,4 @@ def submit_decision(item_id):
         notes=notes
     )
     
-    return redirect(url_for('main.item_assessment', item_id=item_id))
+    return redirect(url_for('main.item_assessment', item_id=item_id))

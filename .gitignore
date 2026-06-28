@@ -5,4 +5,4 @@ __pycache__/
 venv/
 .DS_Store
 instance/
-*.sqlite3
+*.sqlite3.DS_Store

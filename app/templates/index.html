@@ -2,62 +2,178 @@
 
 {% block title %}Home | Ngurra Digital Library{% endblock %}
 
-
 {% block hero %}
-    <!--- Bootstrap 5 Jumbotron for the Main Page -->
+    <!-- Bootstrap 5 Jumbotron for the Main Page -->
     <div class="p-5 mb-4 jumbotron-custom">
         <div class="container-fluid py-3">
             <h1 class="display-3">Custodians of<br/><em>Country &amp; Story</em></h1>
-            <p class="col-md-8 fs-4">A governed digital archive of Indigenous knowledges and cultural heritage materials — managed in partnership with a Community Elder Advisory Council under the CARE principles.</p>
+            <p class="col-md-8 fs-4">
+                A governed digital archive of Indigenous knowledges and cultural heritage materials — managed in partnership with a Community Elder Advisory Council under the CARE principles.
+            </p>
             <a href="#collection" class="btn btn-outline-dark mt-2 btn-custom">Browse Collection</a>
         </div>
     </div>
 {% endblock %}
 
-{% block content %}   
-    <!-- Acknowledgement of Country Banner-->
+{% block content %}
+
+    <!-- Acknowledgement of Country Banner -->
     <div class="container text-center my-4">
         <div class="py-3 px-5 text-dark">
             <span class="border-start border-danger ps-3">
                 <em>The Ngurra Digital Library acknowledges the Traditional Custodians of these lands and pays respect to Elders past, present, and emerging.</em>
-            </span>  
+            </span>
         </div>
     </div>
 
- 
     <div class="container mb-5" id="collection">
-        <p class="section-label mb-2">Featured Items</p>
+        <p class="section-label mb-2">Browse Collection</p>
+
+        <!-- Search and filter form -->
+        <form method="GET" action="{{ url_for('main.index') }}" class="row g-3 mb-4">
+
+            <!-- Search box -->
+            <div class="col-md-4">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control" 
+                    placeholder="Search by title, description, community or collection"
+                    value="{{ search_query }}"
+                >
+            </div>
+
+            <!-- Media type filter -->
+            <div class="col-md-2">
+                <select name="category" class="form-select">
+                    <option value="">All media types</option>
+                    <option value="Audio Recording" {% if selected_category == "Audio Recording" %}selected{% endif %}>Audio Recording</option>
+                    <option value="Photograph" {% if selected_category == "Photograph" %}selected{% endif %}>Photograph</option>
+                    <option value="Map" {% if selected_category == "Map" %}selected{% endif %}>Map</option>
+                </select>
+            </div>
+
+            <!-- Community filter -->
+            <div class="col-md-2">
+                <select name="community" class="form-select">
+                    <option value="">All communities</option>
+                    <option value="Yuggera" {% if selected_community == "Yuggera" %}selected{% endif %}>Yuggera</option>
+                    <option value="Waka Waka" {% if selected_community == "Waka Waka" %}selected{% endif %}>Waka Waka</option>
+                    <option value="Gugu Badhun" {% if selected_community == "Gugu Badhun" %}selected{% endif %}>Gugu Badhun</option>
+                    <option value="Kalkadoon" {% if selected_community == "Kalkadoon" %}selected{% endif %}>Kalkadoon</option>
+                    <option value="Gubbi Gubbi" {% if selected_community == "Gubbi Gubbi" %}selected{% endif %}>Gubbi Gubbi</option>
+                    <option value="Butchulla" {% if selected_community == "Butchulla" %}selected{% endif %}>Butchulla</option>
+                    <option value="Jirrbal" {% if selected_community == "Jirrbal" %}selected{% endif %}>Jirrbal</option>
+                    <option value="Wulgurukaba" {% if selected_community == "Wulgurukaba" %}selected{% endif %}>Wulgurukaba</option>
+                    <option value="Yidinji" {% if selected_community == "Yidinji" %}selected{% endif %}>Yidinji</option>
+                    <option value="Iningai" {% if selected_community == "Iningai" %}selected{% endif %}>Iningai</option>
+                    <option value="Bidjara" {% if selected_community == "Bidjara" %}selected{% endif %}>Bidjara</option>
+                    <option value="Kullilli" {% if selected_community == "Kullilli" %}selected{% endif %}>Kullilli</option>
+                    <option value="Wakaman" {% if selected_community == "Wakaman" %}selected{% endif %}>Wakaman</option>
+                    <option value="Barunggam" {% if selected_community == "Barunggam" %}selected{% endif %}>Barunggam</option>
+                </select>
+            </div>
+        
+        <!-- Public just sees Approved items -->    
+        {% if session.get('userRole') in ('Elder', 'Admin', 'Curator') %}
+            <!-- Access status filter -->
+            <div class="col-md-2">
+                <select name="access_status" class="form-select">
+                    <option value="">All access</option>
+                    <option value="Approve for Public Access" {% if selected_access_status == "Approve for Public Access" %}selected{% endif %}>Public Access</option>
+                    <option value="Restrict - Community Only" {% if selected_access_status == "Restrict - Community Only" %}selected{% endif %}>Community Only</option>
+                    <option value="Pending Approval" {% if selected_access_status == "Pending Approval" %}selected{% endif %}>Pending Approval</option>
+                    <option value="Reject" {% if selected_access_status == "Reject" %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+        
+            <!-- Sensitivity filter -->
+            <div class="col-md-1">
+                <select name="sensitivity" class="form-select">
+                    <option value="">All</option>
+                    <option value="Low" {% if selected_sensitivity == "Low" %}selected{% endif %}>Low</option>
+                    <option value="Moderate" {% if selected_sensitivity == "Moderate" %}selected{% endif %}>Moderate</option>
+                    <!-- Curators don't get to see High filter anyway -->
+                    {% if session.get('userRole') in ('Elder', 'Admin') %}
+                    <option value="High" {% if selected_sensitivity == "High" %}selected{% endif %}>High</option>
+                    {% endif %}
+                </select>
+            </div>
+        {% endif %}
+
+            <!-- Search button -->
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-dark w-100">Search</button>
+            </div>
+        </form>
+
+        <!-- Items cards -->
         <div class="row">
-            <!--- Starts the Loop --->
-            {% for item in items %} 
-            <div class="col-sm-6 col-md-4 mb-4">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="{% if item['itemStatus'] == 'Approve for Public Access' %}thumb-approved{% else %}thumb-placeholder{% endif %}">
-                        <span class="mt-1 font-monospace">{{ item['itemMediaType'] }}</span>
-                    </div>
-                    <div class="card-body d-flex flex-column">
-                        <div>
-                            <span class="badge 
-                                {% if item['itemStatus'] == 'Approve for Public Access' %}text-bg-success
-                                {% elif item['itemStatus'] == 'Restrict - Community Only' %}text-bg-danger
-                                {% elif item['itemStatus'] == 'Reject' %}text-bg-dark
-                                {% else %}text-bg-warning{% endif %} mb-2">
-                                {{ item['itemStatus'] }}
-                            </span>
+            {% for item in items %}
+                <div class="col-sm-6 col-md-4 mb-4">
+                    <div class="card h-100">
+
+                        <div class="{% if item['itemStatus'] == 'Approve for Public Access' %}thumb-approved{% else %}thumb-placeholder{% endif %}">
+                            <span class="mt-1">{{ item['itemMediaType'] }}</span>
                         </div>
-                        <h4 class="card-title">{{ item['itemTitle'] }}</h4>
-                        <p class="card-text text-muted flex-grow-1">{{ item['itemDescription'] }}</p>
-                        
-                        <div class="d-flex justify-content-between align-items-center mt-3" style="position: relative; z-index: 10;">
-                            <a href="{{ url_for('main.item_detail', item_id=item['itemID']) }}" class="btn btn-sm btn-outline-dark">View Details</a>
-                            {% if session.get('user_role') in ['Elder', 'Curator', 'Admin'] %}
-                            <a href="{{ url_for('main.item_assessment', item_id=item['itemID']) }}" class="btn btn-sm btn-dark">Assess</a>
+
+                        <div class="card-body">
+
+                            {% if item['itemStatus'] == 'Approve for Public Access' %}
+                                <span class="badge text-bg-success mb-2">Public Access</span>
+                            {% elif item['itemStatus'] == 'Restrict - Community Only' %}
+                                <span class="badge text-bg-danger mb-2">Community Only</span>
+                            {% elif item['itemStatus'] == 'Pending Approval' %}
+                                <span class="badge text-bg-warning mb-2">Pending Approval</span>
+                            {% elif item['itemStatus'] == 'Reject' %}
+                                <span class="badge text-bg-secondary mb-2">Rejected</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary mb-2">Under Review</span>
+                            {% endif %}
+
+                            <h4 class="card-title">{{ item['itemTitle'] }}</h4>
+
+                            <p class="card-text flex-grow-1">
+                                {{ item['itemDescription'] }}
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Community:</strong> {{ item['communityName'] }}
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Collection:</strong> {{ item['collectionShortName'] }}
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Sensitivity:</strong>
+                                {% if item['itemSensitivityLabel'] %}
+                                    {{ item['itemSensitivityLabel'] }}
+                                {% else %}
+                                    Under review
+                                {% endif %}
+                            </p>
+
+                            {% if item['itemCulturalWarningFlag'] %}
+                                <p class="text-danger mb-1">
+                                    <strong>Cultural warning applies</strong>
+                                </p>
+                            {% endif %}
+
+                            {% if session.get('userRole') in ('Elder', 'Admin') and item['itemStatus'] in ('Pending Approval', 'Restrict - Community Only') %}
+                                <a href="{{ url_for('main.item_assessment', item_id=item['itemID']) }}" class="stretched-link"></a>
+                            {% else %}
+                                <a href="{{ url_for('main.item_detail', item_id=item['itemID']) }}" class="stretched-link"></a>
                             {% endif %}
                         </div>
                     </div>
                 </div>
-            </div>
+            {% else %}
+                <div class="col-12">
+                    <p>No items found matching your search or filters.</p>
+                </div>
             {% endfor %}
         </div>
     </div>
+
 {% endblock %}

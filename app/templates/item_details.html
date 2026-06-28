@@ -23,101 +23,132 @@
 </div>
 {% endblock %}
 
+
 {% block content %}
-<div class="row">
+    <div class="row">
 
-    <div class="col-md-4 mb-4 mb-md-0">
-        <div class="thumb-approved mb-4">
-            Oral History Recording
+        <!-- LEFT COLUMN: Item image / item status / metadata -->
+        <div class="col-md-4 mb-4 mb-md-0">
+
+            {% if item['itemStatus'] == "Approve for Public Access" %}
+                <div class="thumb-approved mb-4">
+                    {{ item['itemMediaType'] }}
+                </div>
+            {% else %}
+                <div class="thumb-placeholder mb-4">
+                    Access Restricted
+                </div>
+            {% endif %}
+
+            <table class="table table-metadata">
+                <tbody>
+
+                    <tr>
+                        <td>
+                            <span class="meta-label">Access Status</span>
+                            <div>
+                                <span class="badge 
+                                        {% if item['itemStatus'] == 'Approve for Public Access' %}text-bg-success
+                                        {% elif item['itemStatus'] =='Restrict - Community Only' %}text-bg-danger
+                                        {% elif item['itemStatus'] == 'Pending Approval' %}text-bg-warning
+                                        {% else %}text-bg-secondary
+                                        {% endif %} 
+                                        mt-1">{{ item['itemStatus'] }}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <span class="meta-label">Media Type</span>
+                            <div class="meta-value">{{ item['itemMediaType'] }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="meta-label">Community of Origin</span>
+                            <div class="meta-value">{{ item['communityRegion'] }}, {{ item['communityName'] }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="meta-label">Language Group</span>
+                            <div class="meta-value">{{ item['itemLanguageGroup'] }}</div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <span class="meta-label">Recorded Length</span>
+                            <div class="meta-value">Duration 42 min</div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <span class="meta-label">Sensitivity Level</span>
+                            <div class="meta-value">{{ item['itemSensitivityLabel']}}</div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
         </div>
 
-        <table class="table table-metadata">
-            <tbody>
-                <tr>
-                    <td>
-                        <span class="meta-label">Access Status</span>
-                        <div>
-                            <span class="badge 
-                                    {% if item['itemStatus'] == 'Approve for Public Access' %}text-bg-success
-                                    {% elif item['itemStatus'] == 'Restrict - Community Only' %}text-bg-danger
-                                    {% elif item['itemStatus'] == 'Reject' %}text-bg-dark
-                                    {% else %}text-bg-warning{% endif %} mt-1">
-                                {{ item['itemStatus'] }}
-                            </span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="meta-label">Media Type</span>
-                        <div class="meta-value">{{ item['itemMediaType'] }}</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="meta-label">Community of Origin</span>
-                        <div class="meta-value">{{ item['communityRegion'] }}, {{ item['communityName'] }}</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="meta-label">Language Group</span>
-                        <div class="meta-value">{{ item['itemLanguageGroup'] }}</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="meta-label">Recorded Length</span>
-                        <div class="meta-value">Duration 42 min</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="meta-label">Sensitivity Level</span>
-                        <div class="meta-value">{{ item['itemSensitivityLabel']}}</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+        <!-- RIGHT COLUMN: Item details and request form -->
+        <div class="col-md-8">
+
+            <h2 class="display-5 mb-1">About this Item</h2>
+            <hr class="accent-line mb-4">
+            
+            <p class="item-description mb-4">
+                {{ item['itemDescription'] }}
+            </p>
+            
+            <div class="callout-box note-box mb-3">
+                <strong>Cultural Note:</strong> {{ item['itemCulturalNote'] }}
+            </div>
+            {% if item['itemCulturalWarningFlag'] %}
+            <div class="callout-box warning-box mb-5">
+                ⚠ {{ item['itemCulturalWarningText'] }}
+            </div>
+            {% endif %}
+            
+            <h2 class="display-5 mb-1">Request to View at Library</h2>
+            <hr class="accent-line mb-4">
+
+            <p class="text-muted small mb-4">
+                To request access to this item, complete the form below. Library staff will respond within 5 business days.
+            </p>
+
+            <form method="POST" action="{{ url_for('main.item_request', item_id=item['itemID']) }}">
+                <div class="form-group mb-3">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="first_name" class="form-control" placeholder="Your first name" value="{{ session.get('userFirstName', '') }}">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="last_name" class="form-control" placeholder="Your last name" value="{{ session.get('userLastName', '') }}">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="your@email.com" value="{{ session.get('userEmail', '')}}">
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Reason for Access</label>
+                    <textarea name="reason" class="form-control" rows="4" placeholder="Briefly describe your research purpose"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-outline-dark px-4">
+                    Submit Request
+                </button>
+            </form>
+
+        </div>
     </div>
-    <div class="col-md-8">
-        <h2 class="display-5 mb-1">About this Item</h2>
-        <hr class="accent-line mb-4">
-
-        <p class="item-description mb-4">
-            {{ item['itemDescription'] }}
-        </p>
-
-        <div class="callout-box note-box mb-3">
-            <strong>Cultural Note:</strong> {{ item['itemCulturalNote'] }}
-        </div>
-        {% if item['itemCulturalWarningFlag'] %}
-        <div class="callout-box warning-box mb-5">
-            ⚠ {{ item['itemCulturalWarningText'] }}
-        </div>
-        {% endif %}
-
-        <h2 class="display-5 mb-1">Request to View at Library</h2>
-        <hr class="accent-line mb-4">
-        <p class="text-muted small mb-4">To access the original recording in person, complete the form below. Library
-            staff will respond within 5 business days.</p>
-
-        <form>
-            <div class="form-group mb-3">
-                <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" placeholder="Your full name">
-            </div>
-            <div class="form-group mb-3">
-                <label class="form-label">Email Address</label>
-                <input type="email" class="form-control" placeholder="your@email.com">
-            </div>
-            <div class="form-group mb-4">
-                <label class="form-label">Reason for Access</label>
-                <textarea class="form-control" rows="4" placeholder="Briefly describe your research purpose"></textarea>
-            </div>
-            <button type="submit" class="btn btn-outline-dark px-4">Submit Request</button>
-        </form>
-    </div>
-</div>
-
 {% endblock %}
