@@ -1,7 +1,7 @@
 :root {
   --sand: #E2C08F; /* overall page colour - colour of australian sand */
   --sand-dark: color-mix(in srgb, var(--sand) 90%, #ffffff);
-  --charcoal: #1E1A17; /* jumbotron colour */
+  --charcoal: #1E1A17; 
   --charcoal-light: color-mix(in srgb, var(--charcoal) 96%, #ffffff);
   --black: #000000; /* theme for body text*/
   --earth: #447859;
@@ -47,6 +47,12 @@ html {
 
 .btn-custom {
   color: var(--sand) !important;
+  background-color: var(--charcoal-light);  
+}
+
+.btn-custom:hover {
+  background-color: var(--sand);
+  color: var(--charcoal) !important;
 }
 
 .jumbotron-custom {
@@ -73,7 +79,7 @@ html {
   justify-content:center; 
   flex-direction:column; 
   color:var(--burntorange); 
-  font-size:.65rem; 
+  font-size:1rem; 
   letter-spacing:.12em; 
   text-transform:uppercase; 
 }
@@ -98,8 +104,6 @@ html {
     height: 100px;
   }
 }
-
-
 
 .card-title {
   font-size:1.1rem;
@@ -143,7 +147,7 @@ html {
 
 .display-5 {
   font-weight: 600;
-  font-family: "Helvetica", sans-serif;
+  font-family: "Europa";
   color: var(--olivebrown);
 }
 
@@ -155,6 +159,14 @@ html {
   font-weight: 200;
   font-size: 1rem;
   color: var(--sand) !important;
+  font-style: italic;
+}
+
+.lead {
+  font-weight: 200;
+  font-size: 1.2rem;
+  color: var(--charcoal) !important;
+  font-family: Europa;
 }
 
 .callout-box {
@@ -164,6 +176,14 @@ html {
   color: var(--burntorange);
   border-left: 3px solid;
   font-style: italic;
+}
+
+.text-earth {
+  color: var(--earth) !important;
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+  font-family: Minion, sans-serif;
 }
 
 .card-meta {
