@@ -10,7 +10,10 @@
                     <span class="section-label mb-2 d-block">Collection · {{ item['collectionName'] }}</span>
                     <h1 class="display-4">{{ item['itemTitle']}} </h1>
                     <p class="subtitle">{{ item['communityName'] }} · {{ item['itemMediaType'] }} · {{ item['itemDate'] }}</p>
-                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">Back to Collection</a>
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2 me-2">Back to Collection</a>
+                    {% if session.get('user_role') in ['Elder', 'Curator', 'Admin'] %}
+                    <a href="{{ url_for('main.item_assessment', item_id=item['itemID']) }}" class="btn btn-warning mt-2 text-dark font-weight-bold">Assess this Item</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -30,7 +33,15 @@
                     <tr>
                         <td>
                             <span class="meta-label">Access Status</span>
-                            <div><span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mt-1">{{ item['itemStatus'] }}</span></div>
+                            <div>
+                                <span class="badge 
+                                    {% if item['itemStatus'] == 'Approve for Public Access' %}text-bg-success
+                                    {% elif item['itemStatus'] == 'Restrict - Community Only' %}text-bg-danger
+                                    {% elif item['itemStatus'] == 'Reject' %}text-bg-dark
+                                    {% else %}text-bg-warning{% endif %} mt-1">
+                                    {{ item['itemStatus'] }}
+                                </span>
+                            </div>
                         </td>
                     </tr>
                     <tr>

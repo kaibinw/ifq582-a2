@@ -221,6 +221,10 @@ html {
   background: var(--maroon);
 }
 
+.btn-pending {
+  background: var(--burntorange);
+}
+
 .comment-block { 
   border-left:3px solid var(--burntorange); 
   padding:.75rem 1rem; 
@@ -245,4 +249,17 @@ html {
 .restricted-banner {
   background: color-mix(in srgb, var(--olivebrown) 80%, #000000);
   color: var(--burntorange);
+}
+
+.card-charcoal {
+  background-color: var(--charcoal);
+  color: var(--sand) !important;
+}
+
+.card-charcoal .form-label {
+  color: var(--sand) !important;
+}
+
+.card-charcoal .display-5 {
+  color: var(--sand) !important;
 }
