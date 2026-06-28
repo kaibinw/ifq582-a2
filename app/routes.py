@@ -147,6 +147,11 @@ def logout():
     session.clear()
     return redirect(url_for('main.index'))
 
+@main_bp.route('/about')
+def about():
+    """Display about page"""
+    return render_template('about.html')
+
 @main_bp.route('/item/<int:item_id>')
 def item_detail(item_id):
     item = models.get_item_with_metadata(item_id)
