@@ -16,7 +16,9 @@ Models / Tables:
 """
 
 from datetime import datetime
-from . import mysql
+from flask_mysqldb import MySQL
+
+mysql = MySQL()
 
 
 def get_cursor():
@@ -254,6 +256,15 @@ def get_user_by_email(email):
     return result
 
 
+def get_community_by_id(community_id):
+    """ Fetch ONE community by its community ID"""
+    cursor = get_cursor()
+    sql = "SELECT communityName, communityRegion FROM Community WHERE communityID = %s"
+    cursor.execute(sql, (community_id,))
+    result = cursor.fetchone()
+    return result
+
+
 def get_communities_for_user(user_id):
     """Fetch all communities for user by user ID"""
     cursor = get_cursor()
@@ -274,20 +285,49 @@ Approval comment helpers
 
 
 def get_approvals_by_item_id(item_id):
-    """Fetch approval comments by item ID"""
-    cursor = get_cursor()
+    """Fetch discussion comments for an item, joining the user's name and role"""
+    cursor = mysql.connection.cursor()
     sql = """
-    SELECT 
-        approvalDiscussionID, 
-        approvalDiscussionText, 
-        approvalDiscussionDate, 
-        userID 
-    FROM ApprovalComment 
-    WHERE itemID = %s
+    SELECT ac.approvalDiscussionID, ac.approvalDiscussionText, ac.approvalDiscussionDate, 
+           ac.userID, u.userHonourific, u.userFirstName, u.userLastName, u.userRole
+    FROM ApprovalComment ac
+    JOIN Users u ON ac.userID = u.userID
+    WHERE ac.itemID = %s
+    ORDER BY ac.approvalDiscussionDate ASC
     """
     cursor.execute(sql, (item_id,))
     result = cursor.fetchall()
     return result
+
+
+def add_approval_comment(item_id, user_id, comment_text):
+    """Insert a new comment into the ApprovalComment table"""
+    cursor = mysql.connection.cursor()
+    sql = """
+    INSERT INTO ApprovalComment (itemID, userID, approvalDiscussionText, approvalDiscussionDate)
+    VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
+    """
+    cursor.execute(sql, (item_id, user_id, comment_text))
+    mysql.connection.commit()
+
+
+def update_cultural_metadata(item_id, status, approver_id, sensitivity, warning_flag, warning_text, notes):
+    """Update item assessment results in CulturalMetadata"""
+    cursor = mysql.connection.cursor()
+    sql = """
+    UPDATE CulturalMetadata
+    SET itemStatus = %s,
+        itemApprovalDate = CURRENT_TIMESTAMP,
+        itemApproverID = %s,
+        itemSensitivityLabel = %s,
+        itemCulturalWarningFlag = %s,
+        itemCulturalWarningText = %s,
+        itemCulturalNote = %s
+    WHERE itemID = %s
+    """
+    cursor.execute(sql, (status, approver_id, sensitivity,
+                   warning_flag, warning_text, notes, item_id))
+    mysql.connection.commit()
 
 
 def get_approvals_by_user_id(user_id):
@@ -330,6 +370,7 @@ def get_requests_by_user_id(user_id):
     return result
 
 
+
 def get_requests_by_item_id(item_id):
     """Fetch access requests by item ID"""
     cursor = get_cursor()
@@ -346,6 +387,7 @@ def get_requests_by_item_id(item_id):
     cursor.execute(sql, (item_id,))
     result = cursor.fetchall()
     return result
+
 
 
 def get_request_by_id(request_id):
@@ -418,8 +460,7 @@ Pending helpers for future development
 #     result = cursor.fetchall()
 #     return result
 #
-#
-# def get_approval_status_by_request_id(request_id):
+# def get_approval_status_by_id(request_id):
 #     cursor = get_cursor()
 #     sql = """
 #     SELECT 

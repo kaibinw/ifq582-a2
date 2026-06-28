@@ -3,151 +3,173 @@
 {% block title %}{{ item['itemTitle'] }} Assessment | Ngurra Digital Library{% endblock %}
 
 {% block hero %}
-    <div class="restricted-banner text-center py-2">
-        <span class="banner">
-            RESTRICTED ACCESS - ELDER ADVISORY COUNCIL & AUTHORISED STAFF ONLY.
-        </span>
-    </div>
+<div class="restricted-banner text-center py-2">
+    <span class="banner">
+        RESTRICTED ACCESS - ELDER ADVISORY COUNCIL & AUTHORISED STAFF ONLY.
+    </span>
+</div>
 
-    <div class="p-5 mb-4 rounded-3 jumbotron-custom">
-        <div class="container">
-            <div class="row align-items-center">
-                
-
-                <div class="col-md-8 text-white">
-                    <span class="section-label mb-2 d-block">Assessment · {{ item['itemTitle'] }}</span>
-                    {% if item['userFirstName'] %}    
-                        <h1 class="display-6">{{ item['itemTitle'] }} - {{ item['userHonourific'] }} {{ item['userFirstName']}} {{ item['userLastName'] }}</h1>
+<div class="p-5 mb-4 rounded-3 jumbotron-custom">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8 text-white">
+                <span class="section-label mb-2 d-block">Assessment · {{ item['itemDate'] }}</span>
+                <h1 class="display-6">
+                    {{ item['itemTitle'] }}
+                    {% if item['userFirstName'] %}
+                    - Approved by {{ item['userHonourific'] or '' }} {{ item['userFirstName'] }} {{ item['userLastName']
+                    }}
                     {% else %}
-                        <h1 class="display-6">{{ item['itemTitle'] }} - Pending Approval</h1>
+                    - Awaiting Review
                     {% endif %}
-                </div>
-
+                </h1>
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-3">← Back to
+                    Collection</a>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        
-        <div class="col-md-4">
-            <!-- LEFT PANEL-->
-            <div class="card-meta p-4 mb-4">
-                <table class="table table-metadata">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span class="meta-label">Access Status</span>
-                                <div>
-                                    <span class="badge 
-                                        {% if item['itemStatus'] == 'Approve for Public Access' %}text-bg-success
-                                        {% elif item['itemStatus'] =='Restrict - Community Only' %}text-bg-danger
-                                        {% elif item['itemStatus'] == 'Pending Approval' %}text-bg-warning
-                                        {% else %}text-bg-secondary
-                                        {% endif %} 
-                                        mt-1">{{ item['itemStatus'] }}
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="meta-label">Media Type</span>
-                                <div class="meta-value">{{ item['itemMediaType'] }}</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="meta-label">Community of Origin</span>
-                                <div class="meta-value">{{ item['communityName']}}, {{ item['communityRegion']}}</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="meta-label">Language Group</span>
-                                <div class="meta-value">{{ item['itemLanguageGroup']}}</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="meta-label">Date Recorded</span>
-                                <div class="meta-value">temp</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="meta-label">Sensitivity Level</span>
-                                <div class="meta-value">{{ item['itemSensitivityLabel']}}</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="card-meta p-4">
-                <form>
-                    <div class="form-group">
-                        <label class="meta-label">Sensitivity Level</label>
-                        <select class="form-control" name="sensitivity">
-                            <option>Low</option>
-                            <option>Moderate</option>
-                            <option>High / Restricted</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="meta-label">Cultural Warning</label>
-                        <select class="form-control" name="cultural_warning">
-                            <option>No warning required</option>
-                            <option>May contain content of sensitive nature</option>
-                            <option>Contains ceremonial content restricted to initiated members</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="meta-label">Assessment Notes</label>
-                        <textarea class="form-control" name="assessment_notes" rows="4" placeholder="Add notes on cultural significance or access recommendations"></textarea>
-                    </div>
-                </form>
-            </div>
+<div class="row">
+
+    <div class="col-md-4">
+        <!-- LEFT PANEL-->
+        <div class="card-meta p-4 mb-4">
+            <table class="table table-metadata">
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="meta-label">Access Status</span>
+                            <div>
+                                <span class="badge 
+                                        {% if item['itemStatus'] == 'Approved for Public Access' %}text-bg-success
+                                        {% elif item['itemStatus'] == 'Restrict - Community Only' %}text-bg-danger
+                                        {% elif item['itemStatus'] == 'Reject' %}text-bg-dark
+                                        {% else %}text-bg-warning{% endif %} mt-1">
+                                    {{ item['itemStatus'] }}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="meta-label">Media Type</span>
+                            <div class="meta-value">{{ item['itemMediaType'] }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="meta-label">Community of Origin</span>
+                            <div class="meta-value">{{ item['communityName'] }}, {{ item['communityRegion'] }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="meta-label">Language Group</span>
+                            <div class="meta-value">{{ item['itemLanguageGroup'] }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="meta-label">Date Recorded</span>
+                            <div class="meta-value">{{ item['itemDate'] }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="meta-label">Sensitivity Level</span>
+                            <div class="meta-value">{{ item['itemSensitivityLabel'] or 'Not Set' }}</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <div class="col-md-8">
-            <div class="card-meta p-4 mb-4">
-                <h5 class="panel-title">Record Final Decision</h5>
-                <div class="section-rule"></div>
-                <p class="panel-disclaimer">
-                    This decision will update the item status and notify the submitting curator. 
-                    Only authorised Elders may submit a final decision.
-                </p>
-                
-                <button class="btn decision-btn btn-approve">Approve for Public Access</button>
-                <button class="btn decision-btn btn-restrict">Restrict — Community Only</button>
-                <button class="btn decision-btn btn-reject">Reject</button>
-            </div>
-
-            <div class="card-meta p-4">
-                <h2 class="panel-discussion">Assessment Discussion</h2>
-                <div class="section-rule"></div>
-
-                <div class="comment-block">
-                    <small>Elder Thomas Nguburri · 03 Feb 2024</small>
-                    <p class="mt-1">I have reviewed the hand drawn maps. It looks like some may contain images of sacred sites. May consider needing a moderate sensitivity rating for the public </p>
+        <div class="card-meta p-4">
+            <form id="assessment-form" method="POST"
+                action="{{ url_for('main.submit_decision', item_id=item['itemID']) }}">
+                <div class="form-group mb-3">
+                    <label class="meta-label" for="sensitivity">Sensitivity Level</label>
+                    <select class="form-control" id="sensitivity" name="sensitivity">
+                        <option {% if item['itemSensitivityLabel']=='Low' %}selected{% endif %}>Low</option>
+                        <option {% if item['itemSensitivityLabel']=='Moderate' %}selected{% endif %}>Moderate</option>
+                        <option {% if item['itemSensitivityLabel']=='High' %}selected{% endif %}>High / Restricted
+                        </option>
+                    </select>
                 </div>
-
-                <div class="comment-block">
-                    <small>Elder Mary Cobbo · 08 Feb 2024</small>
-                    <p class="mt-1">Agreed. </p>
+                <div class="form-group mb-3">
+                    <label class="meta-label" for="warning_text">Cultural Warning</label>
+                    <select class="form-control" id="warning_text" name="warning_text">
+                        <option {% if item['itemCulturalWarningText']=='No warning required' or not
+                            item['itemCulturalWarningText'] %}selected{% endif %}>No warning required</option>
+                        <option {% if item['itemCulturalWarningText']=='May contain sensitive content' %}selected{%
+                            endif %}>May contain content of sensitive nature</option>
+                        <option {% if
+                            item['itemCulturalWarningText']=='Contains ceremonial information restricted to initiated members'
+                            %}selected{% endif %}>Contains ceremonial content restricted to initiated members</option>
+                    </select>
                 </div>
-
-                <div class="form-group mt-3">
-                    <label class="form-label">Add Comment</label>
-                    <textarea class="form-control" rows="4" placeholder="Share with the advisory council"></textarea>
+                <div class="form-group mb-3">
+                    <label class="meta-label" for="notes">Assessment Notes</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="4"
+                        placeholder="Add notes on cultural significance or access recommendations">{{ item['itemCulturalNote'] or '' }}</textarea>
                 </div>
-                <button class="btn btn-outline-dark btn-comment">Post Comment</button>
-            </div>
+            </form>
         </div>
-        
     </div>
+
+    <div class="col-md-8">
+        <div class="card-meta p-4 mb-4">
+            <h5 class="panel-title">Record Final Decision</h5>
+            <div class="section-rule"></div>
+            <p class="panel-disclaimer">
+                This decision will update the item status and notify the submitting curator.
+                Only authorised Elders may submit a final decision.
+            </p>
+
+            <button type="submit" form="assessment-form" name="decision" value="Approve"
+                class="btn decision-btn btn-approve mb-2">Approved for Public Access</button>
+            <button type="submit" form="assessment-form" name="decision" value="Restrict"
+                class="btn decision-btn btn-restrict mb-2">Restrict — Community Only</button>
+            <button type="submit" form="assessment-form" name="decision" value="Reject"
+                class="btn decision-btn btn-reject mb-2">Reject</button>
+            <button type="submit" form="assessment-form" name="decision" value="Pending"
+                class="btn decision-btn btn-pending mb-2">Reset to Pending</button>
+        </div>
+
+        <div class="card-meta p-4">
+            <h2 class="panel-discussion">Assessment Discussion</h2>
+            <div class="section-rule"></div>
+
+            <div id="comments-container">
+                {% for comment in comments %}
+                <div class="comment-block">
+                    <small>
+                        <strong>{{ comment['userHonourific'] or '' }} {{ comment['userFirstName'] }} {{
+                            comment['userLastName'] }}</strong>
+                        ({{ comment['userRole'] }}) · {{ comment['approvalDiscussionDate'] }}
+                    </small>
+                    <p class="mt-1 mb-0">{{ comment['approvalDiscussionText'] }}</p>
+                </div>
+                {% else %}
+                <p class="text-muted small">No assessment discussion yet. Be the first to comment below.</p>
+                {% endfor %}
+            </div>
+
+            <form method="POST" action="{{ url_for('main.add_comment', item_id=item['itemID']) }}" class="mt-4">
+                <div class="form-group mb-3">
+                    <label class="form-label" for="comment_text">Add Comment</label>
+                    <textarea class="form-control" id="comment_text" name="comment_text" rows="4"
+                        placeholder="Share with the advisory council" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-outline-dark btn-comment">Post Comment</button>
+            </form>
+        </div>
+    </div>
+
+</div>
 {% endblock %}
 
 <script>

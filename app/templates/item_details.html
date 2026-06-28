@@ -3,18 +3,24 @@
 {% block title %}{{ item['itemTitle'] }} | Ngurra Digital Library{% endblock %}
 
 {% block hero %}
-    <div class="p-5 mb-4 rounded-3 jumbotron-custom">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8 text-white">
-                    <span class="section-label mb-2 d-block">Collection · {{ item['collectionName'] }}</span>
-                    <h1 class="display-4">{{ item['itemTitle']}} </h1>
-                    <p class="subtitle">{{ item['communityName'] }} · {{ item['itemMediaType'] }}</p>
-                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">Back to Collection</a>
-                </div>
+<div class="p-5 mb-4 rounded-3 jumbotron-custom">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8 text-white">
+                <span class="section-label mb-2 d-block">Collection · {{ item['collectionName'] }}</span>
+                <h1 class="display-4">{{ item['itemTitle']}} </h1>
+                <p class="subtitle">{{ item['communityName'] }} · {{ item['itemMediaType'] }} · {{ item['itemDate'] }}
+                </p>
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2 me-2">Back to
+                    Collection</a>
+                {% if session.get('user_role') in ['Elder', 'Curator', 'Admin'] %}
+                <a href="{{ url_for('main.item_assessment', item_id=item['itemID']) }}"
+                    class="btn btn-warning mt-2 text-dark font-weight-bold">Assess this Item</a>
+                {% endif %}
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 
