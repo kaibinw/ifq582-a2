@@ -130,9 +130,12 @@ def login():
         
         user = models.get_user_by_email(email)
         if user and user['userPassword'] == password:
-            session['user_id'] = user['userID']
-            session['user_name'] = f"{user['userHonourific'] or ''} {user['userFirstName']} {user['userLastName']}".strip()
-            session['user_role'] = user['userRole']
+            session['userID'] = user['userID']
+            session['userName'] = f"{user['userHonourific'] or ''} {user['userFirstName']} {user['userLastName']}".strip()
+            session['userRole'] = user['userRole']
+            session['userFirstName'] = user['userFirstName']
+            session['userLastName'] = user['userLastName']
+            session['userEmail'] = user['userEmail']
             
             # Redirect to next url if available, otherwise home page
             next_url = request.args.get('next')
@@ -177,11 +180,11 @@ def item_request(item_id):
 @elder_required
 def item_assessment(item_id):
     # Ensure user is logged in
-    if not session.get('user_id'):
+    if not session.get('userID'):
         return redirect(url_for('main.login', next=request.url))
     
     # Restrict to Elder, Curator, Admin
-    if session.get('user_role') not in ['Elder', 'Curator', 'Admin']:
+    if session.get('userRole') not in ['Elder', 'Curator', 'Admin']:
         abort(403)
         
     item = models.get_item_with_metadata(item_id)
@@ -193,17 +196,17 @@ def item_assessment(item_id):
 
 @main_bp.route('/assessment/<int:item_id>/comment', methods=['POST'])
 def add_comment(item_id):
-    if not session.get('user_id'):
+    if not session.get('userID'):
         return redirect(url_for('main.login'))
         
-    if session.get('user_role') not in ['Elder', 'Curator', 'Admin']:
+    if session.get('userRole') not in ['Elder', 'Curator', 'Admin']:
         abort(403)
         
     comment_text = request.form.get('comment_text', '').strip()
     if comment_text:
         models.add_approval_comment(
             item_id=item_id,
-            user_id=session['user_id'],
+            user_id=session['userID'],
             comment_text=comment_text
         )
         
@@ -211,10 +214,10 @@ def add_comment(item_id):
 
 @main_bp.route('/assessment/<int:item_id>/decision', methods=['POST'])
 def submit_decision(item_id):
-    if not session.get('user_id'):
+    if not session.get('userID'):
         return redirect(url_for('main.login'))
         
-    if session.get('user_role') not in ['Elder', 'Curator', 'Admin']:
+    if session.get('userRole') not in ['Elder', 'Curator', 'Admin']:
         abort(403)
         
     sensitivity = request.form.get('sensitivity')
@@ -252,7 +255,7 @@ def submit_decision(item_id):
     models.update_cultural_metadata(
         item_id=item_id,
         status=status,
-        approver_id=session['user_id'],
+        approver_id=session['userID'],
         sensitivity=sensitivity_label,
         warning_flag=warning_flag,
         warning_text=warning_text,

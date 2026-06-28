@@ -65,3 +65,14 @@ README.md             # This file
 (Will fill in later — explain your design choices, what you built, how to navigate the code)
 
 - Flask-MySQLdb vs Flask-SQLAlchemy. Online searches seems to lean towards Flask-SQLAlchemy as the main database best practices, so we followed that. But choosing to revert and rewrite back to Flask-MySQLdb helped us understand the changes and differences in both, and it also falls in line with the requirements.txt of this assignment. 
+
+### Content Headings
+- 'h1' : Page Title
+- 'h2' : Major Sections
+- 'h3' : Subsections
+- 'h4' : Card Titles (item cards)
+
+### Line Heights
+- **Body text**: 1.5 (improved readability)
+- **Headings**: 1.3 (tighter for visual hierarchy)
+- **Metadata**: 1.4 (balanced readability)

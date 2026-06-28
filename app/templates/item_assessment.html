@@ -9,20 +9,25 @@
     </span>
 </div>
 
-<div class="p-5 mb-4 rounded-3 jumbotron-custom">
+<div class="p-5 mb-4 jumbotron-custom">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8 text-white">
                 <span class="section-label mb-2 d-block">Assessment · {{ item['itemDate'] }}</span>
-                <h1 class="display-6">
+                <h1 class="display-4">
                     {{ item['itemTitle'] }}
-                    {% if item['userFirstName'] %}
-                    - Approved by {{ item['userHonourific'] or '' }} {{ item['userFirstName'] }} {{ item['userLastName']
-                    }}
-                    {% else %}
-                    - Awaiting Review
-                    {% endif %}
                 </h1>
+                <h2 class="hero-subtitle">
+                    {% if item['itemStatus'] == 'Approve for Public Access' %}
+                        - Approved by {{ item['userHonourific'] or '' }} {{ item['userFirstName'] }} {{ item['userLastName'] }}
+                    {% elif item['itemStatus'] == 'Restrict - Community Only' %}
+                        - Restricted by {{ item['userHonourific'] or '' }} {{ item['userFirstName'] }} {{ item['userLastName'] }}
+                    {% elif item['itemStatus'] == 'Reject' %}
+                        - Rejected by {{ item['userHonourific'] or '' }} {{ item['userFirstName'] }} {{ item['userLastName'] }}
+                    {% else %}
+                        - Awaiting Review
+                    {% endif %}
+                </h2>
                 <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-3">← Back to
                     Collection</a>
             </div>
@@ -44,11 +49,18 @@
                             <span class="meta-label">Access Status</span>
                             <div>
                                 <span class="badge 
-                                        {% if item['itemStatus'] == 'Approved for Public Access' %}text-bg-success
+                                        {# Colour mapping based on status #}
+                                        {% if item['itemStatus'] == 'Approve for Public Access' %}text-bg-success
                                         {% elif item['itemStatus'] == 'Restrict - Community Only' %}text-bg-danger
                                         {% elif item['itemStatus'] == 'Reject' %}text-bg-dark
                                         {% else %}text-bg-warning{% endif %} mt-1">
-                                    {{ item['itemStatus'] }}
+
+                                        {# Display friendly labels instead of database value #}
+                                        {% if item['itemStatus'] == 'Approve for Public Access' %}Public Access
+                                        {% elif item['itemStatus'] == 'Restrict - Community Only' %}Community Only
+                                        {% elif item['itemStatus'] == 'Reject' %}Rejected
+                                        {% else %}Under Review
+                                        {% endif %}
                                 </span>
                             </div>
                         </td>

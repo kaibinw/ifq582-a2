@@ -286,7 +286,7 @@ Approval comment helpers
 
 def get_approvals_by_item_id(item_id):
     """Fetch discussion comments for an item, joining the user's name and role"""
-    cursor = mysql.connection.cursor()
+    cursor = get_cursor()
     sql = """
     SELECT ac.approvalDiscussionID, ac.approvalDiscussionText, ac.approvalDiscussionDate, 
            ac.userID, u.userHonourific, u.userFirstName, u.userLastName, u.userRole
@@ -302,18 +302,18 @@ def get_approvals_by_item_id(item_id):
 
 def add_approval_comment(item_id, user_id, comment_text):
     """Insert a new comment into the ApprovalComment table"""
-    cursor = mysql.connection.cursor()
+    cursor = get_cursor()
     sql = """
     INSERT INTO ApprovalComment (itemID, userID, approvalDiscussionText, approvalDiscussionDate)
     VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
     """
     cursor.execute(sql, (item_id, user_id, comment_text))
-    mysql.connection.commit()
+    cursor.connection.commit()
 
 
 def update_cultural_metadata(item_id, status, approver_id, sensitivity, warning_flag, warning_text, notes):
     """Update item assessment results in CulturalMetadata"""
-    cursor = mysql.connection.cursor()
+    cursor = get_cursor()
     sql = """
     UPDATE CulturalMetadata
     SET itemStatus = %s,
@@ -327,7 +327,7 @@ def update_cultural_metadata(item_id, status, approver_id, sensitivity, warning_
     """
     cursor.execute(sql, (status, approver_id, sensitivity,
                    warning_flag, warning_text, notes, item_id))
-    mysql.connection.commit()
+    cursor.connection.commit()
 
 
 def get_approvals_by_user_id(user_id):
