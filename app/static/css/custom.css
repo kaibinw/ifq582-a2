@@ -144,6 +144,24 @@ html {
   border-color: var(--sand);
 }
 
+.table-striped {
+  background-color: var(--sand-dark);
+}
+
+.table-striped thead th {
+  background-color: transparent;
+  border-bottom: 2px solid var(--earth)
+}
+
+.table-striped tbody tr {
+  background-color: transparent;
+}
+
+.table-striped tbody td {
+  background-color: transparent;
+  border-color: var(--sand);
+}
+
 .meta-label {
   font-size: 1.1rem;
   font-weight: 600;
@@ -284,6 +302,33 @@ html {
 
 .btn-pending {
   background: var(--burntorange);
+}
+
+.btn-primary {
+  background: var(--burntorange);
+  border: 2px solid var(--brown) !important;
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--burntorange) 90%, #ffffff);
+  border: 2px solid var(--brown) !important;
+}
+
+.btn-secondary {
+  background: var(--charcoal-light);
+  border: 2px solid var(--charcoal) !important;
+}
+
+.btn-secondary:hover {
+  background: color-mix(in srgb, var(--charcoal) 80%, #ffffff);
+}
+
+.btn-edit {
+  background: var(--burntorange) !important;
+}
+
+.btn-edit:hover {
+  background: var(--sand);
 }
 
 .comment-block { 

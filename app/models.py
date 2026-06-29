@@ -463,3 +463,52 @@ def get_unique_sensitivity_levels():
     cursor.execute(sql)
     results = cursor.fetchall()
     return [row['itemSensitivityLabel'] for row in results]
+
+"""
+User Management helpers (admin only)
+"""
+
+def create_user(email, password, first_name, last_name, role, honorific=None):
+    """Create new user in Users table"""
+    cursor = get_cursor()
+
+    permission_levels = {'Public': 1, 'Curator': 2, 'Elder': 3, 'Admin': 4}
+    perm_level = permission_levels.get(role,1)
+
+    sql = """
+    INSERT INTO Users
+    (userHonourific, userLastName, userFirstName, userEmail, userRole, userPermissionLevel, userPassword)
+    VALUES(%s, %s, %s, %s, %s, %s, %s)
+    """
+
+    cursor.execute(sql, (honorific, last_name, first_name, email, role, perm_level, password))
+    cursor.connection.commit()
+    return cursor.lastrowid
+
+def update_user(user_id, email, first_name, last_name, role):
+    """Update Users"""
+    cursor = get_cursor()
+
+    permission_levels = {'Public': 1, 'Curator': 2, 'Elder': 3, 'Admin': 4}
+    perm_level = permission_levels.get(role,1)
+
+    sql = """
+    UPDATE Users
+    SET 
+        userEmail = %s,
+        userFirstName = %s,
+        userLastName = %s,
+        userRole = %s,
+        userPermissionLevel = %s
+    WHERE userID = %s
+    """
+    cursor.execute(sql, (email, first_name, last_name, role, perm_level, user_id))
+    cursor.connection.commit()
+
+def delete_user(user_id):
+    """Delete User by ID"""
+    cursor = get_cursor()
+    sql = "DELETE FROM Users WHERE userID = %s"
+    cursor.execute(sql, (user_id))
+    cursor.connection.commit()
+    
