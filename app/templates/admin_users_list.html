@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users | Ngurra Digital Library{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Manage Users</h2>
+
+    <a href="{{ url_for('main.admin_create_user') }}" class="btn btn-primary mb-3">Create New User</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user['userEmail'] }}</td>
+                <td>{{ user['userFirstName'] }} {{ user['userLastName'] }}</td>
+                <td>{{ user['userRole'] }}</td>
+                <td>
+                    <a href="{{ url_for('main.admin_edit_user', user_id=user['userID']) }}" class="btn btn-sm btn-edit">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

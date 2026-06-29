@@ -1,17 +1,18 @@
 :root {
-  --sand: #E2C08F; /* overall page colour - colour of australian sand */
+  --sand: #d5b488; /* overall page colour - colour of australian sand */
   --sand-dark: color-mix(in srgb, var(--sand) 90%, #ffffff);
   --charcoal: #1E1A17; 
   --charcoal-light: color-mix(in srgb, var(--charcoal) 96%, #ffffff);
   --black: #000000; /* theme for body text*/
-  --earth: #447859;
+  --earth: #0c4524;
   --burntorange: #b66912;
   --brown: #A0622A;
   --olivebrown: #4d3d25; 
   --slateblue: #5c8aca; 
   --maroon: #5D100A;
   --earth-light: color-mix(in srgb, var(--earth) 92%, #ffffff);
-  --white: #ffffff
+  --white: #ffffff;
+  --orange: #D97443;
 }
 
 body {
@@ -139,6 +140,24 @@ html {
 }
 
 .table-metadata tbody td {
+  background-color: transparent;
+  border-color: var(--sand);
+}
+
+.table-striped {
+  background-color: var(--sand-dark);
+}
+
+.table-striped thead th {
+  background-color: transparent;
+  border-bottom: 2px solid var(--earth)
+}
+
+.table-striped tbody tr {
+  background-color: transparent;
+}
+
+.table-striped tbody td {
   background-color: transparent;
   border-color: var(--sand);
 }
@@ -285,6 +304,33 @@ html {
   background: var(--burntorange);
 }
 
+.btn-primary {
+  background: var(--burntorange);
+  border: 2px solid var(--brown) !important;
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--burntorange) 90%, #ffffff);
+  border: 2px solid var(--brown) !important;
+}
+
+.btn-secondary {
+  background: var(--charcoal-light);
+  border: 2px solid var(--charcoal) !important;
+}
+
+.btn-secondary:hover {
+  background: color-mix(in srgb, var(--charcoal) 80%, #ffffff);
+}
+
+.btn-edit {
+  background: var(--burntorange) !important;
+}
+
+.btn-edit:hover {
+  background: var(--sand);
+}
+
 .comment-block { 
   border-left:3px solid var(--burntorange); 
   padding:.75rem 1rem; 
@@ -327,8 +373,9 @@ html {
 #footer_aoc_container {
   padding-top: 50px;
   padding-bottom: 50px;
-  background-color:var(--earth-light);
-  color: var(--white);
+  background-color:var(--earth);
+  color: var(--orange);
+  font-family: Europa;
 }
 
 #footer_aoc_content {
@@ -338,6 +385,8 @@ html {
 footer {
   background-color:var(--charcoal);
   color:var(--sand);
+  font-family: Europa;
+  font-weight: 200;
 }
 
 #custom_nav{

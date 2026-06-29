@@ -47,6 +47,9 @@ def index():
     community = request.args.get('community', '')
     access_status = request.args.get('access_status', '')
     sensitivity = request.args.get('sensitivity', '')
+    media_types = models.get_unique_media_types()
+    communities = models.get_unique_communities()
+    sensitivity_levels = models.get_unique_sensitivity_levels()
 
     items = models.get_all_items_with_metadata()
     items = list(items)
@@ -117,7 +120,10 @@ def index():
         selected_category=category,
         selected_community=community,
         selected_access_status=access_status,
-        selected_sensitivity=sensitivity
+        selected_sensitivity=sensitivity,
+        media_types=media_types,
+        communities=communities,
+        sensitivity_levels=sensitivity_levels
     )
 
 
@@ -263,3 +269,50 @@ def submit_decision(item_id):
     )
     
     return redirect(url_for('main.item_assessment', item_id=item_id))
+
+
+# =================================
+# ADMIN ROUTES - User Management
+# =================================
+
+@main_bp.route('/admin/users')
+@admin_required
+def admin_users():
+    """List all users (admin only)"""
+    users = models.get_all_users()
+    users = sorted(users, key=lambda u: (u['userLastName'], u['userFirstName'] ))
+    return render_template('admin_users_list.html', users=users)
+
+@main_bp.route('/admin/users/create', methods=['GET', 'POST'])
+@admin_required
+def admin_create_user():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        role = request.form.get('role')
+
+        models.create_user(email, password, first_name, last_name, role)
+        return redirect(url_for('main.admin_users'))
+
+    return render_template('admin_user_form.html')
+
+@main_bp.route('/admin/users/<int:user_id>/edit', methods=['GET', 'POST'])
+@admin_required
+def admin_edit_user(user_id):
+    user = models.get_user_by_id(user_id)
+
+    if not user:
+        abort(404)
+    
+    if request.method == 'POST':
+        email = request.form.get('email')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        role = request.form.get('role')
+
+        models.update_user(user_id, email, first_name, last_name, role)
+        return redirect(url_for('main.admin_users'))
+
+    return render_template('admin_user_form.html', user=user, is_edit=True)

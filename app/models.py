@@ -440,37 +440,75 @@ def create_access_request(user_id, item_id, reason_text):
     return True
 
 
+def get_unique_media_types():
+    """Get all unique media types from Item table"""
+    cursor = get_cursor()
+    sql = "SELECT DISTINCT itemMediaType FROM Item ORDER BY itemMediaType"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return [row['itemMediaType'] for row in results]
+
+def get_unique_communities():
+    """Get all unique communities from Community table"""
+    cursor = get_cursor()
+    sql = "SELECT DISTINCT communityName FROM Community ORDER BY communityName"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return [row['communityName'] for row in results]
+
+def get_unique_sensitivity_levels():
+    """Get all unique sensitivity levels from CulturalMetadata table"""
+    cursor = get_cursor()
+    sql = "SELECT DISTINCT itemSensitivityLabel FROM CulturalMetadata ORDER BY itemSensitivityLabel"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return [row['itemSensitivityLabel'] for row in results]
+
 """
-Pending helpers for future development
+User Management helpers (admin only)
 """
 
+def create_user(email, password, first_name, last_name, role, honorific=None):
+    """Create new user in Users table"""
+    cursor = get_cursor()
 
-# def get_approval_statuses_by_approver_id(approver_id):
-#     cursor = get_cursor()
-#     sql = """
-#     SELECT 
-#         accessApprovalStatus, 
-#         accessApprovalDate, 
-#         requestID, 
-#         accessApprovalID 
-#     FROM ItemAccessApproval 
-#     WHERE approverID = %s
-#     """
-#     cursor.execute(sql, (approver_id,))
-#     result = cursor.fetchall()
-#     return result
-#
-# def get_approval_status_by_id(request_id):
-#     cursor = get_cursor()
-#     sql = """
-#     SELECT 
-#         accessApprovalStatus, 
-#         accessApprovalDate, 
-#         approverID, 
-#         accessApprovalID 
-#     FROM ItemAccessApproval 
-#     WHERE requestID = %s
-#     """
-#     cursor.execute(sql, (request_id,))
-#     result = cursor.fetchone()
-#     return result
+    permission_levels = {'Public': 1, 'Curator': 2, 'Elder': 3, 'Admin': 4}
+    perm_level = permission_levels.get(role,1)
+
+    sql = """
+    INSERT INTO Users
+    (userHonourific, userLastName, userFirstName, userEmail, userRole, userPermissionLevel, userPassword)
+    VALUES(%s, %s, %s, %s, %s, %s, %s)
+    """
+
+    cursor.execute(sql, (honorific, last_name, first_name, email, role, perm_level, password))
+    cursor.connection.commit()
+    return cursor.lastrowid
+
+def update_user(user_id, email, first_name, last_name, role):
+    """Update Users"""
+    cursor = get_cursor()
+
+    permission_levels = {'Public': 1, 'Curator': 2, 'Elder': 3, 'Admin': 4}
+    perm_level = permission_levels.get(role,1)
+
+    sql = """
+    UPDATE Users
+    SET 
+        userEmail = %s,
+        userFirstName = %s,
+        userLastName = %s,
+        userRole = %s,
+        userPermissionLevel = %s
+    WHERE userID = %s
+    """
+    cursor.execute(sql, (email, first_name, last_name, role, perm_level, user_id))
+    cursor.connection.commit()
+
+def delete_user(user_id):
+    """Delete User by ID"""
+    cursor = get_cursor()
+    sql = "DELETE FROM Users WHERE userID = %s"
+    cursor.execute(sql, (user_id))
+    cursor.connection.commit()
+    
