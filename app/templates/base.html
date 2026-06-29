@@ -56,10 +56,40 @@
             {% block content %}
             {% endblock %}
         </main>
+
         {% block footer %}
-            <footer class="text-center py-4">
-                <p>Ngurra Digital Library · acknowledgement line · 2026</p>
-            </footer>
+        <footer>
+            <!-- acknowledgment in footer -->
+            <div id="footer_aoc_container">
+                <div class="d-flex justify-content-center align-items-center">
+                    <div  class="flex-column text-center" id="footer_aoc_content">
+                        <p>The Ngurra Digital Library acknowledges the Traditional Custodians of these lands and pays respect to Elders past, present, and emerging.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="footer_nav_container">
+                <nav id="footer-nav">
+                    <!-- footer navbar -->
+                    <div class="navbar justify-content-center ">
+                        <ul class="nav border-bottom" id="footer_nav_border">
+                            <li class="nav-item">
+                                <a class="nav-link" id="custom_nav" href="{{ url_for('main.index') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="custom_nav" href="{{ url_for('main.about') }}">About</a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <p class="text-center">© 2026 Ngurra Digital Library</a>
+
+                </nav>
+            </div>
+
+
+        </footer>
+
         {% endblock %}   
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         {% block scripts %}{% endblock %}

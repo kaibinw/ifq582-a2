@@ -10,6 +10,8 @@
   --olivebrown: #4d3d25; 
   --slateblue: #5c8aca; 
   --maroon: #5D100A;
+  --earth-light: color-mix(in srgb, var(--earth) 92%, #ffffff);
+  --white: #ffffff
 }
 
 body {
@@ -320,4 +322,34 @@ html {
 
 .card-charcoal .display-5 {
   color: var(--sand) !important;
+}
+
+#footer_aoc_container {
+  padding-top: 50px;
+  padding-bottom: 50px;
+  background-color:var(--earth-light);
+  color: var(--white);
+}
+
+#footer_aoc_content {
+  max-width: 575.98px;
+}
+
+footer {
+  background-color:var(--charcoal);
+  color:var(--sand);
+}
+
+#custom_nav{
+  color:var(--sand);
+}
+
+#footer_nav_container{
+  padding-top:20px;
+  padding-bottom:20px;
+}
+
+
+#footer_nav_border {
+  border-color:var(--sand) !important; 
 }
