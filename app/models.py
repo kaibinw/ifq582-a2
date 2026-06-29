@@ -440,37 +440,26 @@ def create_access_request(user_id, item_id, reason_text):
     return True
 
 
-"""
-Pending helpers for future development
-"""
+def get_unique_media_types():
+    """Get all unique media types from Item table"""
+    cursor = get_cursor()
+    sql = "SELECT DISTINCT itemMediaType FROM Item ORDER BY itemMediaType"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return [row['itemMediaType'] for row in results]
 
+def get_unique_communities():
+    """Get all unique communities from Community table"""
+    cursor = get_cursor()
+    sql = "SELECT DISTINCT communityName FROM Community ORDER BY communityName"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return [row['communityName'] for row in results]
 
-# def get_approval_statuses_by_approver_id(approver_id):
-#     cursor = get_cursor()
-#     sql = """
-#     SELECT 
-#         accessApprovalStatus, 
-#         accessApprovalDate, 
-#         requestID, 
-#         accessApprovalID 
-#     FROM ItemAccessApproval 
-#     WHERE approverID = %s
-#     """
-#     cursor.execute(sql, (approver_id,))
-#     result = cursor.fetchall()
-#     return result
-#
-# def get_approval_status_by_id(request_id):
-#     cursor = get_cursor()
-#     sql = """
-#     SELECT 
-#         accessApprovalStatus, 
-#         accessApprovalDate, 
-#         approverID, 
-#         accessApprovalID 
-#     FROM ItemAccessApproval 
-#     WHERE requestID = %s
-#     """
-#     cursor.execute(sql, (request_id,))
-#     result = cursor.fetchone()
-#     return result
+def get_unique_sensitivity_levels():
+    """Get all unique sensitivity levels from CulturalMetadata table"""
+    cursor = get_cursor()
+    sql = "SELECT DISTINCT itemSensitivityLabel FROM CulturalMetadata ORDER BY itemSensitivityLabel"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return [row['itemSensitivityLabel'] for row in results]
