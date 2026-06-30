@@ -18,66 +18,17 @@
             <form method="POST" action="{{ url_for('main.login') }}">
                 <div class="form-group mb-3">
                     <label class="form-label" for="userEmail">Email Address</label>
-                    <input type="email" class="form-control" id="userEmail" name="email" value="c.watson@ngurra.edu.au" placeholder="email@ngurra.edu.au" required>
+                    <input type="email" class="form-control" id="userEmail" name="email" placeholder="email@ngurra.edu.au" required>
                 </div>
                 <div class="form-group mb-4">
                     <label class="form-label" for="userPassword">Password</label>
-                    <input type="password" class="form-control" id="userPassword" name="password" value="CW_password" placeholder="Password" required>
+                    <input type="password" class="form-control" id="userPassword" name="password" placeholder="Password" required>
                 </div>
                 
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-outline-light">Sign In</button>
                 </div>
             </form>
-        </div>
-
-        <!-- TODO: Remove developer credentials table before submission -->
-        <div class="card mt-4 bg-light border-warning text-dark">
-            <div class="card-body">
-                <h6 class="card-title text-warning-emphasis font-monospace">Developer / Tester Credentials</h6>
-                <p class="card-text small mb-2">Click a row to autofill credentials, then sign in:</p>
-                <div class="table-responsive">
-                    <table class="table table-sm table-borderless table-hover small mb-0">
-                        <thead>
-                            <tr class="border-bottom">
-                                <th>Role</th>
-                                <th>Email</th>
-                                <th>Password</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cred-table">
-                            <tr class="cred-row" style="cursor:pointer;"
-                                data-email="c.watson@ngurra.edu.au"
-                                data-password="CW_password">
-                                <td><strong>Elder</strong></td>
-                                <td><code>c.watson@ngurra.edu.au</code></td>
-                                <td><code>CW_password</code></td>
-                            </tr>
-                            <tr class="cred-row" style="cursor:pointer;"
-                                data-email="s.matthews@ngurra.edu.au"
-                                data-password="SM_password">
-                                <td><strong>Curator</strong></td>
-                                <td><code>s.matthews@ngurra.edu.au</code></td>
-                                <td><code>SM_password</code></td>
-                            </tr>
-                            <tr class="cred-row" style="cursor:pointer;"
-                                data-email="j.bluth@ngurra.edu.au"
-                                data-password="JB_password">
-                                <td><strong>Public</strong></td>
-                                <td><code>j.bluth@ngurra.edu.au</code></td>
-                                <td><code>JB_password</code></td>
-                            </tr>
-                            <tr class="cred-row" style="cursor:pointer;"
-                                data-email="j.johns@ngurra.edu.au"
-                                data-password="JJ_password">
-                                <td><strong>Admin</strong></td>
-                                <td><code>j.johns@ngurra.edu.au</code></td>
-                                <td><code>JJ_password</code></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </div>
 </div>
