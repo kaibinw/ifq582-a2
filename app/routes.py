@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, abort
 from . import models
 from functools import wraps
+from . import bcrypt
 
 main_bp = Blueprint('main', __name__)
 
@@ -133,9 +134,11 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        
+
         user = models.get_user_by_email(email)
-        if user and user['userPassword'] == password:
+        
+        ## add in compare for bcrypt
+        if user and bcrypt.check_password_hash(user['userPassword'], password):
             session['userID'] = user['userID']
             session['userName'] = f"{user['userHonourific'] or ''} {user['userFirstName']} {user['userLastName']}".strip()
             session['userRole'] = user['userRole']

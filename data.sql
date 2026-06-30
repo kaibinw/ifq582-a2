@@ -234,6 +234,28 @@ VALUES
     (NULL,    'Cross',    'Leanne',   'l.cross@ngurra.edu.au',    'Public',  1, 'LC2_password'),
     (NULL,    'Burke',    'Patrick',  'p.burke@ngurra.edu.au',    'Public',  1, 'PB_password');
 
+-- overwrite passwords with hashed passwords
+UPDATE Users SET userPassword = '$2b$12$e45sHB1AYqAbY1cvd/bS2eCm51s6AbApVf3NiI.RrNTDNFjoCxp0C' WHERE userID = '1';
+UPDATE Users SET userPassword = '$2b$12$sgIsMcbso7fH9v8FL13N/unqTplqpqaVOcleAyb5Y0MrIy68FL4K2' WHERE userID = '2';
+UPDATE Users SET userPassword = '$2b$12$BkSockNWWlGfR5SqiR6RvuGH6gTcS0qMqHMI2JX609cjiVWGpYKI.' WHERE userID = '3';
+UPDATE Users SET userPassword = '$2b$12$TOVlWpyOvPqrEE3rNw8Ucerri6XrGCDWlxf9d/HByHz1bvfNXEo7q' WHERE userID = '4';
+UPDATE Users SET userPassword = '$2b$12$mOW3o1J3AWS3fTgX9foQre8Lf5M0DQSJRGN73Ozyh9EherIu89Mx.' WHERE userID = '5';
+UPDATE Users SET userPassword = '$2b$12$Wmm.40kr2Uip3WauoZLIxeb5HS8/UeA/CBhnnGlRmrs2g98QEr/lS' WHERE userID = '6';
+UPDATE Users SET userPassword = '$2b$12$./.xW8UhnlsF0ACqiLupS.gYAm58efFSSwSxMKgyOjNMbx0WW0G7q' WHERE userID = '7';
+UPDATE Users SET userPassword = '$2b$12$qE0aTlO2n10YUMQ7KxN4fO7aVA.c0qKtH0hgerIPg8saOLaCS6kjG' WHERE userID = '8';
+UPDATE Users SET userPassword = '$2b$12$CoKUmZ89tUpFmUNnE5Ao2eGmigz5Q5gNJ4RZAEsSRcgNvr2.0tfYe' WHERE userID = '9';
+UPDATE Users SET userPassword = '$2b$12$jjqzkFMLE/e87k3OxgO/6ecssHUcEL7GLH/TMbr7FtL8vrD566zKS' WHERE userID = '10';
+UPDATE Users SET userPassword = '$2b$12$R8ezRyMCEaM0ljhKYzDpLu21zU22yIwO7CUaoe8kv1J8sTSyBA2nS' WHERE userID = '11';
+UPDATE Users SET userPassword = '$2b$12$5z4S2TFG5nj16JkJwJ6Qc.LGW3KQaBZOMR.tvIADVVwFGrKQIPR86' WHERE userID = '12';
+UPDATE Users SET userPassword = '$2b$12$zeSPdTOL1t0pDEUFjaVR8.cQROBKmHNqsUTtdG1idxcezDzZgdI/u' WHERE userID = '13';
+UPDATE Users SET userPassword = '$2b$12$nrSGZd1.thhs99MrBkegyuvryEn/WI0qTIYZ27ZaxGzlhW5L6r9SS' WHERE userID = '14';
+UPDATE Users SET userPassword = '$2b$12$NzLkhBFzvJeAaZfE6P8lAukaHre32K6L024PmgHkf6gFpIjG1cZyC' WHERE userID = '15';
+UPDATE Users SET userPassword = '$2b$12$D9nDDsDR9jUYPX96Ws25tuAQuFGLq4wMmfyyqb/jOHYEv.MKIUq0C' WHERE userID = '16';
+UPDATE Users SET userPassword = '$2b$12$8fg/anW3Zamy67cToaB3aekqZAo2BfX7d4iWjIuShW3HLSSgMU516' WHERE userID = '17';
+UPDATE Users SET userPassword = '$2b$12$PsMvghkumqLkPS/vDU5XMepcA1qYQJ03VyVu2YZ8R0HE8SdhW85OG' WHERE userID = '18';
+UPDATE Users SET userPassword = '$2b$12$raWq2jgR3GpD1j0YS7pcouPhf1pGqXf5aVDGqCpFqe.C1QbukiOyK' WHERE userID = '19';
+UPDATE Users SET userPassword = '$2b$12$EWvrfwHsjjiubk6b1VcFm.Ybj5kpkcrsgFC2BhbbcIMk54S0fHuny' WHERE userID = '20';
+
 -- Item table records
 INSERT INTO Item
 	(collectionID, communityID, itemDate, itemTitle, itemDescription, itemImage, itemMediaType)
