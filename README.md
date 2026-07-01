@@ -7,10 +7,10 @@ A Flask web application for managing Indigenous cultural heritage under CARE Pri
 1. Clone the repo
 2. `python -m venv venv`
 3. `source venv/bin/activate`  (Mac/Linux) or `venv\Scripts\activate` (Windows)
-4. `pip install -r requirements.txt`
-5. Open MySQL Workbench, run 'data.sql' to create and seed the database
-6. Update 'config.py' with your MySQL username and password
-7. `python run.py` → visit `http://localhost:5000`
+4. Open MySQL Workbench, run data.sql to create IFQ582 database
+5. Update config.py with your MySQL username and password
+6. pip install -r requirements.txt
+7. python run.py → visit http://localhost:5000
 
 `git pull` 
 run this whenever you start work to get everyone's latest commits. 
@@ -65,3 +65,14 @@ README.md             # This file
 (Will fill in later — explain your design choices, what you built, how to navigate the code)
 
 - Flask-MySQLdb vs Flask-SQLAlchemy. Online searches seems to lean towards Flask-SQLAlchemy as the main database best practices, so we followed that. But choosing to revert and rewrite back to Flask-MySQLdb helped us understand the changes and differences in both, and it also falls in line with the requirements.txt of this assignment. 
+
+### Content Headings
+- 'h1' : Page Title
+- 'h2' : Major Sections
+- 'h3' : Subsections
+- 'h4' : Card Titles (item cards)
+
+### Line Heights
+- **Body text**: 1.5 (improved readability)
+- **Headings**: 1.3 (tighter for visual hierarchy)
+- **Metadata**: 1.4 (balanced readability)

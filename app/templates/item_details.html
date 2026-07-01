@@ -3,30 +3,36 @@
 {% block title %}{{ item['itemTitle'] }} | Ngurra Digital Library{% endblock %}
 
 {% block hero %}
-    <div class="p-5 mb-4 rounded-3 jumbotron-custom">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8 text-white">
-                    <span class="section-label mb-2 d-block">Collection · {{ item['collectionName'] }}</span>
-                    <h1 class="display-4">{{ item['itemTitle']}} </h1>
-                    <p class="subtitle">{{ item['communityName'] }} · {{ item['itemMediaType'] }}</p>
-                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2">Back to Collection</a>
-                </div>
+<div class="p-5 mb-4 jumbotron-custom">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8 text-white">
+                <span class="section-label mb-2 d-block">Collection · {{ item['collectionName'] }}</span>
+                <h1 class="display-4">{{ item['itemTitle']}} </h1>
+                <p class="hero-subtitle">{{ item['communityName'] }} · {{ item['itemMediaType'] }} · {{ item['itemDate'] }}
+                </p>
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-custom mt-2 me-2">Back to
+                    Collection</a>
+                {% if session.get('userRole') in ['Elder', 'Curator', 'Admin'] %}
+                <a href="{{ url_for('main.item_assessment', item_id=item['itemID']) }}"
+                    class="btn btn-warning mt-2 text-dark font-weight-bold">Assess this Item</a>
+                {% endif %}
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 
 {% block content %}
     <div class="row">
 
-        <!-- LEFT COLUMN: Item image / access status / metadata -->
+        <!-- LEFT COLUMN: Item image / item status / metadata -->
         <div class="col-md-4 mb-4 mb-md-0">
 
-            {% if item.access_level == "Public" %}
+            {% if item['itemStatus'] == "Approve for Public Access" %}
                 <div class="thumb-approved mb-4">
-                    {{ item.category }}
+                    {{ item['itemMediaType'] }}
                 </div>
             {% else %}
                 <div class="thumb-placeholder mb-4">
@@ -40,7 +46,16 @@
                     <tr>
                         <td>
                             <span class="meta-label">Access Status</span>
-                            <div><span class="badge {% if item['itemStatus'] == 'Approved' %}text-bg-success{% elif item['itemStatus'] =='Restricted' %}text-bg-danger{% else %}text-bg-warning{% endif %} mt-1">{{ item['itemStatus'] }}</span></div>
+                            <div>
+                                <span class="badge 
+                                        {% if item['itemStatus'] == 'Approve for Public Access' %}text-bg-success
+                                        {% elif item['itemStatus'] =='Restrict - Community Only' %}text-bg-danger
+                                        {% elif item['itemStatus'] == 'Pending Approval' %}text-bg-warning
+                                        {% else %}text-bg-secondary
+                                        {% endif %} 
+                                        mt-1">{{ item['itemStatus'] }}
+                                </span>
+                            </div>
                         </td>
                     </tr>
 
@@ -108,20 +123,25 @@
                 To request access to this item, complete the form below. Library staff will respond within 5 business days.
             </p>
 
-            <form>
+            <form method="POST" action="{{ url_for('main.item_request', item_id=item['itemID']) }}">
                 <div class="form-group mb-3">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control" placeholder="Your full name">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="first_name" class="form-control" placeholder="Your first name" value="{{ session.get('userFirstName', '') }}">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="last_name" class="form-control" placeholder="Your last name" value="{{ session.get('userLastName', '') }}">
                 </div>
 
                 <div class="form-group mb-3">
                     <label class="form-label">Email Address</label>
-                    <input type="email" class="form-control" placeholder="your@email.com">
+                    <input type="email" name="email" class="form-control" placeholder="your@email.com" value="{{ session.get('userEmail', '')}}">
                 </div>
 
                 <div class="form-group mb-4">
                     <label class="form-label">Reason for Access</label>
-                    <textarea class="form-control" rows="4" placeholder="Briefly describe your research purpose"></textarea>
+                    <textarea name="reason" class="form-control" rows="4" placeholder="Briefly describe your research purpose"></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-outline-dark px-4">

@@ -7,7 +7,7 @@
     <div class="p-5 mb-4 jumbotron-custom">
         <div class="container-fluid py-3">
             <h1 class="display-3">Custodians of<br/><em>Country &amp; Story</em></h1>
-            <p class="col-md-8 fs-4">
+            <p class="hero-subtitle">
                 A governed digital archive of Indigenous knowledges and cultural heritage materials — managed in partnership with a Community Elder Advisory Council under the CARE principles.
             </p>
             <a href="#collection" class="btn btn-outline-dark mt-2 btn-custom">Browse Collection</a>
@@ -20,7 +20,7 @@
     <!-- Acknowledgement of Country Banner -->
     <div class="container text-center my-4">
         <div class="py-3 px-5 text-dark">
-            <span class="border-start border-danger ps-3">
+            <span class="border-start acknowledgement border-danger ps-3">
                 <em>The Ngurra Digital Library acknowledges the Traditional Custodians of these lands and pays respect to Elders past, present, and emerging.</em>
             </span>
         </div>
@@ -47,9 +47,11 @@
             <div class="col-md-2">
                 <select name="category" class="form-select">
                     <option value="">All media types</option>
-                    <option value="Audio Recording" {% if selected_category == "Audio Recording" %}selected{% endif %}>Audio Recording</option>
-                    <option value="Photograph" {% if selected_category == "Photograph" %}selected{% endif %}>Photograph</option>
-                    <option value="Map" {% if selected_category == "Map" %}selected{% endif %}>Map</option>
+                    {% for media_type in media_types %}
+                    <option value="{{ media_type }}" 
+                        {% if selected_category == media_type %}selected{% endif %}>{{ media_type }}
+                    </option>
+                    {% endfor %}
                 </select>
             </div>
 
@@ -57,23 +59,16 @@
             <div class="col-md-2">
                 <select name="community" class="form-select">
                     <option value="">All communities</option>
-                    <option value="Yuggera" {% if selected_community == "Yuggera" %}selected{% endif %}>Yuggera</option>
-                    <option value="Waka Waka" {% if selected_community == "Waka Waka" %}selected{% endif %}>Waka Waka</option>
-                    <option value="Gugu Badhun" {% if selected_community == "Gugu Badhun" %}selected{% endif %}>Gugu Badhun</option>
-                    <option value="Kalkadoon" {% if selected_community == "Kalkadoon" %}selected{% endif %}>Kalkadoon</option>
-                    <option value="Gubbi Gubbi" {% if selected_community == "Gubbi Gubbi" %}selected{% endif %}>Gubbi Gubbi</option>
-                    <option value="Butchulla" {% if selected_community == "Butchulla" %}selected{% endif %}>Butchulla</option>
-                    <option value="Jirrbal" {% if selected_community == "Jirrbal" %}selected{% endif %}>Jirrbal</option>
-                    <option value="Wulgurukaba" {% if selected_community == "Wulgurukaba" %}selected{% endif %}>Wulgurukaba</option>
-                    <option value="Yidinji" {% if selected_community == "Yidinji" %}selected{% endif %}>Yidinji</option>
-                    <option value="Iningai" {% if selected_community == "Iningai" %}selected{% endif %}>Iningai</option>
-                    <option value="Bidjara" {% if selected_community == "Bidjara" %}selected{% endif %}>Bidjara</option>
-                    <option value="Kullilli" {% if selected_community == "Kullilli" %}selected{% endif %}>Kullilli</option>
-                    <option value="Wakaman" {% if selected_community == "Wakaman" %}selected{% endif %}>Wakaman</option>
-                    <option value="Barunggam" {% if selected_community == "Barunggam" %}selected{% endif %}>Barunggam</option>
+                    {% for community in communities %}
+                    <option value="{{ community }}" 
+                        {% if selected_community == community %}selected{% endif %}>{{ community }}
+                    </option>
+                    {% endfor %}
                 </select>
             </div>
-
+        
+        <!-- Public just sees Approved items -->    
+        {% if session.get('userRole') in ('Elder', 'Admin', 'Curator') %}
             <!-- Access status filter -->
             <div class="col-md-2">
                 <select name="access_status" class="form-select">
@@ -84,16 +79,19 @@
                     <option value="Reject" {% if selected_access_status == "Reject" %}selected{% endif %}>Rejected</option>
                 </select>
             </div>
-
+        
             <!-- Sensitivity filter -->
             <div class="col-md-1">
                 <select name="sensitivity" class="form-select">
                     <option value="">All</option>
-                    <option value="Low" {% if selected_sensitivity == "Low" %}selected{% endif %}>Low</option>
-                    <option value="Moderate" {% if selected_sensitivity == "Moderate" %}selected{% endif %}>Moderate</option>
-                    <option value="High" {% if selected_sensitivity == "High" %}selected{% endif %}>High</option>
+                    {% for sensitivity in sensitivity_levels %}
+                        {% if sensitivity != "High" or session.get('userRole') in ('Elder', 'Admin') %}
+                        <option value="{{ sensitivity }}" {% if selected_sensitivity == sensitivity %}selected{% endif %}>{{ sensitivity }}</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
             </div>
+        {% endif %}
 
             <!-- Search button -->
             <div class="col-md-1">
@@ -127,7 +125,7 @@
 
                             <h4 class="card-title">{{ item['itemTitle'] }}</h4>
 
-                            <p class="card-text">
+                            <p class="card-text flex-grow-1">
                                 {{ item['itemDescription'] }}
                             </p>
 
@@ -154,7 +152,11 @@
                                 </p>
                             {% endif %}
 
-                            <a class="stretched-link" href="{{ url_for('main.item_detail', item_id=item['itemID']) }}"></a>
+                            {% if session.get('userRole') in ('Elder', 'Admin') and item['itemStatus'] in ('Pending Approval', 'Restrict - Community Only') %}
+                                <a href="{{ url_for('main.item_assessment', item_id=item['itemID']) }}" class="stretched-link"></a>
+                            {% else %}
+                                <a href="{{ url_for('main.item_detail', item_id=item['itemID']) }}" class="stretched-link"></a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
