@@ -34,6 +34,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
                     </li>
+                    {% if session.get('userRole') in ('Curator', 'Admin') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.curator_items') }}">Curate Items</a>
+                    </li>
+                    {% endif %}
                     {% if session.get('userRole') == 'Admin' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.admin_users') }}">Manage Users</a>

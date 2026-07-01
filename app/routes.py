@@ -303,19 +303,71 @@ def submit_decision(item_id):
 # CURATOR ROUTES - item management
 # =================================
 
-@main_bp.route('/curate/items')
+@main_bp.route('/curator/items')
 @curator_required
 def curator_items():
     items = models.get_all_items_with_metadata()
+    # filter out all items that are Restricted or Rejected
+    items = [item for item in items if item['itemStatus'] not in ('Restrict - Community Only', 'Reject')]
+    items = list(items)
     items.sort(key=lambda item: (item['itemTitle'], item['communityName']))
-    return render_template('curate_items_list.html', items=items)
+    return render_template('curator_items_list.html', items=items)
 
 @main_bp.route('/curator/items/create', methods=['GET', 'POST'])
+@curator_required
 def curator_create_item():
+    if request.method == 'POST':
+        collection_id = request.form.get('collection_id')
+        community_id = request.form.get('community_id')
+        date = request.form.get('date')
+        title = request.form.get('title')
+        description = request.form.get('description')
+        image = request.form.get('image')
+        media = request.form.get('media')
+
+        models.create_item(collection_id, community_id, date, title, description, media, image)
+        return redirect(url_for('main.curator_items'))
+
+    collections = models.get_all_collections()
+    communities = models.get_all_communities()
+    return render_template('curator_item_form.html', collections=collections, communities=communities)
 
 
 @main_bp.route('/curator/items/<int:item_id>/edit', methods=['GET', 'POST'])
+@curator_required
 def curator_edit_item(item_id):
+    item = models.get_item_with_metadata(item_id)
+
+    if not item:
+        abort(404)
+    
+    if request.method == 'POST':
+        collection_id = request.form.get('collection_id')
+        community_id = request.form.get('community_id')
+        date = request.form.get('date')
+        title = request.form.get('title')
+        description = request.form.get('description')
+        image = request.form.get('image')
+        media = request.form.get('media')
+
+        models.update_item(item_id, collection_id, community_id, date, title, description, media, image)
+        return redirect(url_for('main.curator_items'))
+    
+    collections = models.get_all_collections()
+    communities = models.get_all_communities()
+    return render_template('curator_item_form.html', item=item, is_edit=True, collections=collections, communities=communities)
+
+@main_bp.route('/curator/items/<int:item_id>/delete', methods=['POST'])
+@curator_required
+def curator_delete_item(item_id):
+    item = models.get_item_with_metadata(item_id)
+
+    if not item:
+        abort(404)
+    
+    models.delete_item(item_id)
+    return redirect(url_for('main.curator_items'))
+
 
 # =================================
 # ADMIN ROUTES - User Management
@@ -335,6 +387,7 @@ def admin_create_user():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
+
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         role = request.form.get('role')
@@ -355,11 +408,27 @@ def admin_edit_user(user_id):
     
     if request.method == 'POST':
         email = request.form.get('email')
+        honorific = request.form.get('honourific')
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         role = request.form.get('role')
-
-        models.update_user(user_id, email, first_name, last_name, role)
+        password = request.form.get('password')
+        if password:
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            models.update_user(user_id, email, honorific, first_name, last_name, role, hashed_password)
+        else:
+            models.update_user(user_id, email, honorific, first_name, last_name, role)
         return redirect(url_for('main.admin_users'))
 
     return render_template('admin_user_form.html', user=user, is_edit=True)
+
+@main_bp.route('/admin/users/<int:user_id>/delete', methods=['POST'])
+@admin_required
+def admin_delete_user(user_id):
+    user = models.get_user_by_id(user_id)
+
+    if not user:
+        abort(404)
+    
+    models.delete_user(user_id)
+    return redirect(url_for('main.admin_users'))

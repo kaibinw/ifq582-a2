@@ -60,7 +60,19 @@ def get_community_by_id(community_id):
 """
 Collection helpers
 """
-
+def get_all_collections():
+    cursor = get_cursor()
+    sql = """
+    SELECT 
+        collectionID, 
+        collectionName, 
+        collectionShortName,
+        collectionDateCreated 
+    FROM Collection
+    """
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
 
 def get_collection_by_id(collection_id):
     cursor = get_cursor()
@@ -515,6 +527,13 @@ def update_item(item_id, collection_id, community_id, date, title, description, 
     cursor.execute(sql, (collection_id, community_id, date, title, description, image, media, item_id))
     cursor.connection.commit()
 
+def delete_item(item_id):
+    cursor = get_cursor()
+    sql = "DELETE FROM Item WHERE itemID = %s"
+    cursor.execute(sql, (item_id,))
+    cursor.connection.commit()
+
+
 """
 User Management helpers (admin only)
 """
@@ -536,24 +555,41 @@ def create_user(email, password, first_name, last_name, role, honorific=None):
     cursor.connection.commit()
     return cursor.lastrowid
 
-def update_user(user_id, email, first_name, last_name, role):
+def update_user(user_id, email, honorific, first_name, last_name, role, password=None):
     """Update Users"""
     cursor = get_cursor()
 
     permission_levels = {'Public': 1, 'Curator': 2, 'Elder': 3, 'Admin': 4}
     perm_level = permission_levels.get(role,1)
 
-    sql = """
-    UPDATE Users
-    SET 
-        userEmail = %s,
-        userFirstName = %s,
-        userLastName = %s,
-        userRole = %s,
-        userPermissionLevel = %s
-    WHERE userID = %s
-    """
-    cursor.execute(sql, (email, first_name, last_name, role, perm_level, user_id))
+    if password:
+        sql = """
+        UPDATE Users
+        SET 
+            userEmail = %s,
+            userHonourific = %s,
+            userFirstName = %s,
+            userLastName = %s,
+            userRole = %s,
+            userPermissionLevel = %s,
+            userPassword = %s
+        WHERE userID = %s
+        """
+        cursor.execute(sql, (email, honorific, first_name, last_name, role, perm_level, password, user_id))
+    else: 
+        sql = """
+        UPDATE Users
+        SET 
+            userEmail = %s,
+            userHonourific = %s,
+            userFirstName = %s,
+            userLastName = %s,
+            userRole = %s,
+            userPermissionLevel = %s
+        WHERE userID = %s
+        """
+        cursor.execute(sql, (email, honorific, first_name, last_name, role, perm_level, user_id))
+    
     cursor.connection.commit()
 
 def delete_user(user_id):
