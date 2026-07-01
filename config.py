@@ -3,6 +3,6 @@ class Config:
     DEBUG = True
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'root'
-    MYSQL_PASSWORD ='your_mysql_password'
-    MYSQL_DB = 'IFQ582'
+    MYSQL_PASSWORD ='Admin12345'
+    MYSQL_DB = 'ifq582'
     MYSQL_CURSORCLASS = 'DictCursor'
