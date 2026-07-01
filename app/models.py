@@ -296,15 +296,6 @@ def get_user_by_email(email):
     return result
 
 
-def get_community_by_id(community_id):
-    """ Fetch ONE community by its community ID"""
-    cursor = get_cursor()
-    sql = "SELECT communityName, communityRegion FROM Community WHERE communityID = %s"
-    cursor.execute(sql, (community_id,))
-    result = cursor.fetchone()
-    return result
-
-
 def get_communities_for_user(user_id):
     """Fetch all communities for user by user ID"""
     cursor = get_cursor()
@@ -479,15 +470,6 @@ def create_access_request(user_id, item_id, reason_text):
     mysql.connect.commit()
     return True
 
-
-def get_unique_media_types():
-    """Get all unique media types from Item table"""
-    cursor = get_cursor()
-    sql = "SELECT DISTINCT itemMediaType FROM Item ORDER BY itemMediaType"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    return [row['itemMediaType'] for row in results]
-
 def get_unique_communities():
     """Get all unique communities from Community table"""
     cursor = get_cursor()
@@ -496,13 +478,42 @@ def get_unique_communities():
     results = cursor.fetchall()
     return [row['communityName'] for row in results]
 
-def get_unique_sensitivity_levels():
-    """Get all unique sensitivity levels from CulturalMetadata table"""
+
+"""
+Curator Item helpers
+"""
+
+def create_item(collection_id, community_id, date, title, description, media, image=None):
     cursor = get_cursor()
-    sql = "SELECT DISTINCT itemSensitivityLabel FROM CulturalMetadata ORDER BY itemSensitivityLabel"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    return [row['itemSensitivityLabel'] for row in results]
+
+    sql = """
+    INSERT INTO Item
+    (collectionID, communityID, itemDate, itemTitle, itemDescription, itemImage, itemMediaType)
+    VALUES(%s, %s, %s, %s, %s, %s, %s)
+    """
+
+    cursor.execute(sql, (collection_id, community_id, date, title, description, image, media))
+    cursor.connection.commit()
+    return cursor.lastrowid
+
+def update_item(item_id, collection_id, community_id, date, title, description, media, image=None):
+    cursor = get_cursor()
+
+    sql = """
+    UPDATE Item
+    SET
+        collectionID = %s,
+        communityID = %s,
+        itemDate = %s,
+        itemTitle = %s, 
+        itemDescription = %s,
+        itemImage = %s,
+        itemMediaType = %s
+    WHERE itemID = %s
+    """
+
+    cursor.execute(sql, (collection_id, community_id, date, title, description, image, media, item_id))
+    cursor.connection.commit()
 
 """
 User Management helpers (admin only)
@@ -549,6 +560,6 @@ def delete_user(user_id):
     """Delete User by ID"""
     cursor = get_cursor()
     sql = "DELETE FROM Users WHERE userID = %s"
-    cursor.execute(sql, (user_id))
+    cursor.execute(sql, (user_id,))
     cursor.connection.commit()
     

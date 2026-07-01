@@ -299,6 +299,23 @@ def submit_decision(item_id):
     
     return redirect(url_for('main.item_assessment', item_id=item_id))
 
+# =================================
+# CURATOR ROUTES - item management
+# =================================
+
+@main_bp.route('/curate/items')
+@curator_required
+def curator_items():
+    items = models.get_all_items_with_metadata()
+    items.sort(key=lambda item: (item['itemTitle'], item['communityName']))
+    return render_template('curate_items_list.html', items=items)
+
+@main_bp.route('/curator/items/create', methods=['GET', 'POST'])
+def curator_create_item():
+
+
+@main_bp.route('/curator/items/<int:item_id>/edit', methods=['GET', 'POST'])
+def curator_edit_item(item_id):
 
 # =================================
 # ADMIN ROUTES - User Management
