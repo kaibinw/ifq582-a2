@@ -23,8 +23,6 @@ mysql = MySQL()
 
 def get_cursor():
     return mysql.connect.cursor()
-
-
 """
 Community helpers
 """
@@ -82,7 +80,49 @@ def get_collection_by_id(collection_id):
 """
 Item helpers
 """
+def get_unique_media_types():
+    """Fetch unique media types for the Home page filter dropdown."""
+    cursor = get_cursor()
+    sql = """
+    SELECT DISTINCT itemMediaType
+    FROM Item
+    WHERE itemMediaType IS NOT NULL
+      AND itemMediaType <> ''
+    ORDER BY itemMediaType
+    """
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
 
+
+def get_unique_access_statuses():
+    """Fetch unique access statuses for the Home page filter dropdown."""
+    cursor = get_cursor()
+    sql = """
+    SELECT DISTINCT itemStatus
+    FROM CulturalMetadata
+    WHERE itemStatus IS NOT NULL
+      AND itemStatus <> ''
+    ORDER BY itemStatus
+    """
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+
+
+def get_unique_sensitivity_levels():
+    """Fetch unique sensitivity levels for the Home page filter dropdown."""
+    cursor = get_cursor()
+    sql = """
+    SELECT DISTINCT itemSensitivityLabel
+    FROM CulturalMetadata
+    WHERE itemSensitivityLabel IS NOT NULL
+      AND itemSensitivityLabel <> ''
+    ORDER BY itemSensitivityLabel
+    """
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
 
 def get_all_items_with_metadata():
     """

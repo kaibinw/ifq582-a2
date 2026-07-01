@@ -1,13 +1,15 @@
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
+from config import Config
 
 mysql =MySQL()
 bcrypt = Bcrypt()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object('config.Config')
+    app.config.from_object(Config)
+
     mysql.init_app(app)
     bcrypt.init_app(app)
     

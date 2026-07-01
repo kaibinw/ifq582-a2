@@ -41,35 +41,58 @@ def curator_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@main_bp.route('/')
 def index():
     search_query = request.args.get('q', '').lower()
     category = request.args.get('category', '')
     community = request.args.get('community', '')
     access_status = request.args.get('access_status', '')
     sensitivity = request.args.get('sensitivity', '')
-    media_types = models.get_unique_media_types()
-    communities = models.get_unique_communities()
-    sensitivity_levels = models.get_unique_sensitivity_levels()
 
+    # Treat "All" dropdown values as no filter
+    if category in ['All', 'All media types']:
+        category = ''
+    if community in ['All', 'All communities']:
+        community = ''
+    if access_status in ['All', 'All access']:
+        access_status = ''
+    if sensitivity in ['All', 'All sensitivity levels']:
+        sensitivity = ''
+
+    # Get data from database
     items = models.get_all_items_with_metadata()
     items = list(items)
+    media_types = models.get_unique_media_types()
+    communities = models.get_unique_communities()  # ← More sensible than get_all_communities()
+    sensitivity_levels = models.get_unique_sensitivity_levels()
 
+    # Role-based visibility
     user_role = session.get('userRole', 'Public')
+    user_id = session.get('userID')
+
     if user_role == 'Public':
         items = [
             item for item in items
             if item.get('itemStatus') in ('Approve for Public Access',)
         ]
-    
-    if user_role == 'Curator':
+
+    elif user_role == 'Curator':
         items = [
             item for item in items
             if item.get('itemSensitivityLabel') in ('Low', 'Moderate')
         ]
-        # Curators cannot access High Sensitivity items
 
-    # sorts the index by collection, then status (pending for Elder/Admin first, then date)
+    elif user_role == 'Elder' and user_id:
+        user_communities = models.get_communities_for_user(user_id)
+        user_community_ids = [community['communityID'] for community in user_communities]
+        items = [
+            item for item in items
+            if item.get('communityID') in user_community_ids
+        ]
+
+    elif user_role == 'Admin':
+        pass  # See all items
+
+    # Sort (Elder/Admin see Pending first, then date)
     if user_role in ('Elder', 'Admin'):
         items.sort(key=lambda x: (
             x.get('collectionName', ''),
@@ -81,19 +104,22 @@ def index():
             x.get('collectionName', ''),
             x['itemDate']
         ))
+
+    # Search filter
     if search_query:
         items = [
             item for item in items
-            if search_query in item['itemTitle'].lower()
-            or search_query in item['itemDescription'].lower()
+            if search_query in item.get('itemTitle', '').lower()
+            or search_query in item.get('itemDescription', '').lower()
             or search_query in item.get('communityName', '').lower()
             or search_query in item.get('collectionName', '').lower()
         ]
 
+    # Dropdown filters
     if category:
         items = [
             item for item in items
-            if item['itemMediaType'] == category
+            if item.get('itemMediaType') == category
         ]
 
     if community:
@@ -128,6 +154,29 @@ def index():
     )
 
 
+@main_bp.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@main_bp.route('/item/<int:item_id>')
+def item_detail(item_id):
+    item = models.get_item_with_metadata(item_id)
+    if not item:
+        return redirect(url_for('main.index'))
+    return render_template('item_details.html', item=item)
+
+
+@main_bp.route('/assessment/<int:item_id>')
+@elder_required
+def item_assessment(item_id):
+    item = models.get_item_with_metadata(item_id)
+    if not item:
+        return redirect(url_for('main.index'))
+    comments = models.get_approvals_by_item_id(item_id)
+    return render_template('item_assessment.html', item=item, comments=comments)
+
+
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -145,8 +194,12 @@ def login():
             session['userFirstName'] = user['userFirstName']
             session['userLastName'] = user['userLastName']
             session['userEmail'] = user['userEmail']
-            
-            # Redirect to next url if available, otherwise home page
+            session['userHonourific'] = user.get('userHonourific', '')
+            session['userName'] = (
+                f"{user['userHonourific'] + ' ' if user['userHonourific'] else ''}"
+                f"{user['userFirstName']} {user['userLastName']}"
+            ).strip()
+
             next_url = request.args.get('next')
             return redirect(next_url or url_for('main.index'))
         else:
