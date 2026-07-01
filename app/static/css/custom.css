@@ -10,6 +10,7 @@
   --olivebrown: #4d3d25; 
   --slateblue: #5c8aca; 
   --maroon: #5D100A;
+  --reddust: #b04932;
   --earth-light: color-mix(in srgb, var(--earth) 92%, #ffffff);
   --white: #ffffff;
   --orange: #D97443;
@@ -340,6 +341,15 @@ html {
 
 .btn-edit:hover {
   background: var(--sand);
+}
+
+.btn-delete {
+  background: var(--reddust) !important;
+  color: var(--white)
+}
+
+.btn-delete:hover {
+  background: color-mix(in srgb, var(--maroon) 80%, #ffffff);
 }
 
 .comment-block { 

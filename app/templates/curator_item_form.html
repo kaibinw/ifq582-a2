@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_edit %}Edit{% else %}Create{% endif %}Item | Ngurra Digital Library{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4">{% if is_edit %}Edit Item{% else %}Create New Item{% endif %}</h2>
+
+            <form method="POST">
+                <div class="form-group mb-3">
+                    <label class="form-label">Image</label>
+                    <input type="text" name="image" class="form-control" value="{{ item['itemImage'] if is_edit else '' }}">
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="title" class="form-control" value="{{ item['itemTitle'] if is_edit else '' }}" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" required>{{ item['itemDescription'] if is_edit else '' }}</textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Item Date</label>
+                    <input type="date" name="date" class="form-control" value="{{ item['itemDate'] if is_edit else '' }}" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Media Type</label>
+                    <select name="media" class="form-select" required>
+                        <option value="">Media Type</option>
+                        <option value="Audio Recording" {% if is_edit and item['itemMediaType'] == 'Audio Recording' %}selected{% endif %}>Audio Recording</option>
+                        <option value="Photograph" {% if is_edit and item['itemMediaType'] == 'Photograph' %}selected{% endif %}>Photograph</option>
+                        <option value="Map" {% if is_edit and item['itemMediaType'] == 'Map' %}selected{% endif %}>Map</option>
+                    </select>
+                    
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Collection</label>
+                    <select name="collection_id" class="form-select" required>
+                        <option value="">Select a Collection</option>
+                        <!-- loop for all collection dropdowns-->
+                        {% for collection in collections %}
+                        <option value="{{ collection['collectionID'] }}" {% if is_edit and item['collectionID'] == collection['collectionID'] %}selected{% endif %}>
+                            {{ collection['collectionName']}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Community</label>
+                    <select name="community_id" class="form-select" required>
+                        <option value="">Select a Community</option>
+                        <!-- loop for all collection dropdowns-->
+                        {% for community in communities %}
+                        <option value="{{ community['communityID'] }}" {% if is_edit and item['communityID'] == community['communityID'] %}selected{% endif %}>
+                            {{ community['communityName']}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">{% if is_edit %}Update Item{% else %}Create Item{% endif %}</button>
+                    <a href="{{ url_for('main.curator_items') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

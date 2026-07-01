@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Curate Items | Ngurra Digital Library{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Curate Items</h2>
+
+    <a href="{{ url_for('main.curator_create_item') }}" class="btn btn-primary mb-3">Create New Item</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Collection Name</th>
+                <th>Community Name</th>
+                <th>Item Title</th>
+                <th>Media Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>
+                    {% if item['itemStatus'] == 'Approve for Public Access' %}
+                        <span class="badge bg-success">Approved</span>
+                    {% elif item['itemStatus'] == 'Pending Approval' %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif item['itemStatus'] == 'Restrict - Community Only' %}
+                        <span class="badge bg-info">Restricted</span>
+                    {% elif item['itemStatus'] == 'Reject' %}
+                        <span class="badge bg-danger">Rejected</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Unknown</span>
+                    {% endif %}
+                </td>
+                <td>{{ item['collectionName'] }}</td>
+                <td>{{ item['communityName'] }}</td>
+                <td>{{ item['itemTitle'] }}</td>
+                <td>{{ item['itemMediaType'] }}</td>
+               <td class="text-center">
+                    <a href="{{ url_for('main.curator_edit_item', item_id=item['itemID']) }}" class="btn btn-sm btn-edit">Edit</a>
+                    <form method="POST" action="{{ url_for('main.curator_delete_item', item_id=item['itemID']) }}" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-delete">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
