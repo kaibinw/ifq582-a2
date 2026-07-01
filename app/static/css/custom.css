@@ -254,6 +254,17 @@ html {
   border: 2px solid var(--earth) !important;
 }
 
+.form-select {
+  background-color: color-mix(in srgb, var(--sand) 76%, #f5f2f2) !important;
+  font-weight: 400;
+  border-color: var(--charcoal);
+  color: var(--black) !important;
+}
+
+.form-select:focus {
+  border-color: var(--charcoal-light);
+}
+
 .panel-title {
   font-size: 2rem;
   font-weight: 600;

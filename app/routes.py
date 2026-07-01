@@ -41,6 +41,7 @@ def curator_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@main_bp.route('/')
 def index():
     search_query = request.args.get('q', '').lower()
     category = request.args.get('category', '')
@@ -156,6 +157,7 @@ def index():
 
 @main_bp.route('/about')
 def about():
+    """Display about page"""
     return render_template('about.html')
 
 
@@ -163,18 +165,8 @@ def about():
 def item_detail(item_id):
     item = models.get_item_with_metadata(item_id)
     if not item:
-        return redirect(url_for('main.index'))
+        abort(404)
     return render_template('item_details.html', item=item)
-
-
-@main_bp.route('/assessment/<int:item_id>')
-@elder_required
-def item_assessment(item_id):
-    item = models.get_item_with_metadata(item_id)
-    if not item:
-        return redirect(url_for('main.index'))
-    comments = models.get_approvals_by_item_id(item_id)
-    return render_template('item_assessment.html', item=item, comments=comments)
 
 
 @main_bp.route('/login', methods=['GET', 'POST'])
@@ -212,18 +204,6 @@ def logout():
     session.clear()
     return redirect(url_for('main.index'))
 
-@main_bp.route('/about')
-def about():
-    """Display about page"""
-    return render_template('about.html')
-
-@main_bp.route('/item/<int:item_id>')
-def item_detail(item_id):
-    item = models.get_item_with_metadata(item_id)
-    if not item:
-        abort(404)
-    return render_template('item_details.html', item=item)
-
 @main_bp.route('/request/<int:item_id>', methods=['POST'])
 def item_request(item_id):
     if not session.get('userID'):
@@ -241,14 +221,7 @@ def item_request(item_id):
 @main_bp.route('/assessment/<int:item_id>')
 @elder_required
 def item_assessment(item_id):
-    # Ensure user is logged in
-    if not session.get('userID'):
-        return redirect(url_for('main.login', next=request.url))
-    
-    # Restrict to Elder, Curator, Admin
-    if session.get('userRole') not in ['Elder', 'Curator', 'Admin']:
-        abort(403)
-        
+     
     item = models.get_item_with_metadata(item_id)
     if not item:
         abort(404)
@@ -349,7 +322,8 @@ def admin_create_user():
         last_name = request.form.get('last_name')
         role = request.form.get('role')
 
-        models.create_user(email, password, first_name, last_name, role)
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        models.create_user(email, hashed_password, first_name, last_name, role)
         return redirect(url_for('main.admin_users'))
 
     return render_template('admin_user_form.html')
