@@ -16,7 +16,7 @@
             <form id="registerForm" method="POST" action="{{ url_for('main.register') }}">
                 <div class="form-group mb-4">
                     <label class="form-label" for="userFirstName">First Name</label>
-                    <input type="text" class="form-control" id="userFirstName" name="first_name" value="{{last_name or '' }}" placeholder="First Name" required>
+                    <input type="text" class="form-control" id="userFirstName" name="first_name" value="{{first_name or '' }}" placeholder="First Name" required>
                 </div>
                 <div class="form-group mb-4">
                     <label class="form-label" for="userLastName">Last Name</label>
@@ -43,7 +43,6 @@
                 <div class="form-group mb-4">
                     <label class="form-label" for="userPasswordConfirm">Confirm Password</label>
                     <input type="password" class="form-control" id="userPasswordConfirm" name="password_confirm" placeholder="Confirm Password" required>
-                    <!-- TODO: Jordan - validate that passwords match -->
                 </div>
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-outline-light">Create Account</button>
@@ -126,12 +125,6 @@
     });
 
 });
-    // TODO: Jordan - add form validation - DONE
-    // check email format - DONE
-    // check password length - DONE
-    // verify passwords match - DONE
-    // handle duplicate email rego DONE
-
 
 </script>
 {% endblock %}
