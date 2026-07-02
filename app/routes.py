@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, render_template, request, redirect, url_for, session, abort
 from . import models
 from functools import wraps
@@ -299,6 +300,75 @@ def submit_decision(item_id):
     
     return redirect(url_for('main.item_assessment', item_id=item_id))
 
+# =================================
+# CURATOR ROUTES - item management
+# =================================
+
+@main_bp.route('/curator/items')
+@curator_required
+def curator_items():
+    items = models.get_all_items_with_metadata()
+    # filter out all items that are Restricted or Rejected
+    items = [item for item in items if item['itemStatus'] not in ('Restrict - Community Only', 'Reject')]
+    items = list(items)
+    items.sort(key=lambda item: (item['itemTitle'], item['communityName']))
+    return render_template('curator_items_list.html', items=items)
+
+@main_bp.route('/curator/items/create', methods=['GET', 'POST'])
+@curator_required
+def curator_create_item():
+    if request.method == 'POST':
+        collection_id = request.form.get('collection_id')
+        community_id = request.form.get('community_id')
+        date = request.form.get('date')
+        title = request.form.get('title')
+        description = request.form.get('description')
+        image = request.form.get('image')
+        media = request.form.get('media')
+
+        models.create_item(collection_id, community_id, date, title, description, media, image)
+        return redirect(url_for('main.curator_items'))
+
+    collections = models.get_all_collections()
+    communities = models.get_all_communities()
+    return render_template('curator_item_form.html', collections=collections, communities=communities)
+
+
+@main_bp.route('/curator/items/<int:item_id>/edit', methods=['GET', 'POST'])
+@curator_required
+def curator_edit_item(item_id):
+    item = models.get_item_with_metadata(item_id)
+
+    if not item:
+        abort(404)
+    
+    if request.method == 'POST':
+        collection_id = request.form.get('collection_id')
+        community_id = request.form.get('community_id')
+        date = request.form.get('date')
+        title = request.form.get('title')
+        description = request.form.get('description')
+        image = request.form.get('image')
+        media = request.form.get('media')
+
+        models.update_item(item_id, collection_id, community_id, date, title, description, media, image)
+        return redirect(url_for('main.curator_items'))
+    
+    collections = models.get_all_collections()
+    communities = models.get_all_communities()
+    return render_template('curator_item_form.html', item=item, is_edit=True, collections=collections, communities=communities)
+
+@main_bp.route('/curator/items/<int:item_id>/delete', methods=['POST'])
+@curator_required
+def curator_delete_item(item_id):
+    item = models.get_item_with_metadata(item_id)
+
+    if not item:
+        abort(404)
+    
+    models.delete_item(item_id)
+    return redirect(url_for('main.curator_items'))
+
 
 # =================================
 # ADMIN ROUTES - User Management
@@ -318,6 +388,7 @@ def admin_create_user():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
+
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         role = request.form.get('role')
@@ -338,11 +409,59 @@ def admin_edit_user(user_id):
     
     if request.method == 'POST':
         email = request.form.get('email')
+        honorific = request.form.get('honourific')
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         role = request.form.get('role')
-
-        models.update_user(user_id, email, first_name, last_name, role)
+        password = request.form.get('password')
+        if password:
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            models.update_user(user_id, email, honorific, first_name, last_name, role, hashed_password)
+        else:
+            models.update_user(user_id, email, honorific, first_name, last_name, role)
         return redirect(url_for('main.admin_users'))
 
-    return render_template('admin_user_form.html', user=user, is_edit=True)
+@main_bp.route('/admin/users/<int:user_id>/delete', methods=['POST'])
+@admin_required
+def admin_delete_user(user_id):
+    models.delete_user(user_id)
+    return redirect(url_for('main.admin_users'))
+
+@main_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        required_domain = "@ngurra.edu.au"
+        password = request.form.get('password')
+        password_confirm = request.form.get('password_confirm')
+
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+
+        if not email or not password or not password_confirm or not first_name or not last_name:
+            return render_template('register.html', error="All fields are required", email=email, first_name=first_name, last_name=last_name)
+
+        email_pattern = r'^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_pattern, email):
+            return render_template('register.html', error="Invalid email format", email=email, first_name=first_name, last_name=last_name)
+
+        if not email.endswith("@ngurra.edu.au"):
+            return render_template('register.html', error="Email must end in @ngurra.edu.au", email=email, first_name=first_name, last_name=last_name)
+
+        if not ( len(password) >= 8 and re.search(r'[A-Z]', password) and re.search(r'\d', password) and re.search(r'[^a-zA-Z0-9]', password)
+    ):
+            return render_template('register.html', error="Password must be 8+ characters and include at least one uppercase letter, at least one number, and at least one special character", email=email, first_name=first_name, last_name=last_name)
+
+        if password and password_confirm and password != password_confirm:
+            return render_template('register.html', error="Passwords do not match", email=email, first_name=first_name, last_name=last_name)
+
+        if models.get_user_by_email(email):
+            return render_template('register.html', error="An account with this email already exists.", email=email, first_name=first_name, last_name=last_name)
+
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        models.create_user(email=email, password=hashed_password, first_name=first_name, last_name=last_name, role='Public')
+
+        return redirect(url_for('main.login'))
+
+    return render_template('register.html')

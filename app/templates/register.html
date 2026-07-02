@@ -9,27 +9,41 @@
             <h2 class="display-5 mb-1 text-center">Create Account</h2>
             <hr class="accent-line mb-4 mx-auto" style="width: 60px; border-top: 2px solid var(--burntorange);">
             
-            {% if error %}
-            <div class="alert alert-danger" role="alert">
+            <div id= "clientError" class="alert alert-danger" role="alert" {% if not error%} style="display:none;"{%endif %}>
                 {{ error }}
             </div>
-            {% endif %}
 
-            <form method="POST" action="{{ url_for('main.register') }}">
+            <form id="registerForm" method="POST" action="{{ url_for('main.register') }}">
+                <div class="form-group mb-4">
+                    <label class="form-label" for="userFirstName">First Name</label>
+                    <input type="text" class="form-control" id="userFirstName" name="first_name" value="{{first_name or '' }}" placeholder="First Name" required>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="form-label" for="userLastName">Last Name</label>
+                    <input type="text" class="form-control" id="userLastName" name="last_name" value="{{last_name or '' }}" placeholder="Last Name" required>
+                </div>
                 <div class="form-group mb-3">
                     <label class="form-label" for="userEmail">Email Address</label>
-                    <input type="email" class="form-control" id="userEmail" name="email" placeholder="email@ngurra.edu.au" required>
+                    <input type="email" class="form-control" id="userEmail" name="email" value="{{email or '' }}" placeholder="email@ngurra.edu.au" required>
                 </div>
                 <div class="form-group mb-4">
                     <label class="form-label" for="userPassword">Password</label>
                     <input type="password" class="form-control" id="userPassword" name="password" placeholder="Password" required>
                 </div>
+                <div id="passwordRules" style="display:none; margin-top:10px;">
+                    <small>
+                        <ul>
+                            <li>At least 8 characters</li>
+                            <li>At least 1 uppercase letter</li>
+                            <li>At least 1 number</li>
+                            <li>At least 1 special character</li>
+                        </ul>
+                    </small>
+                </div>
                 <div class="form-group mb-4">
                     <label class="form-label" for="userPasswordConfirm">Confirm Password</label>
                     <input type="password" class="form-control" id="userPasswordConfirm" name="password_confirm" placeholder="Confirm Password" required>
-                    <!-- TODO: Jordan - validate that passwords match -->
                 </div>
-                
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-outline-light">Create Account</button>
                 </div>
@@ -41,10 +55,76 @@
 
 {% block scripts %}
 <script>
-    // TODO: Jordan - add form validation
-    // check email format
-    // check password length
-    // verify passwords match
-    // handle duplicate email rego
+   document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("registerForm");
+    const errorBox = document.getElementById("clientError");
+    const passwordField = document.getElementById("userPassword");
+    const confirmField = document.getElementById("userPasswordConfirm");
+    const rulesBox = document.getElementById("passwordRules");
+
+    form.addEventListener("submit", function (e) {
+        e.preventDefault(); 
+
+        const email = document.getElementById("userEmail").value.trim();
+        const password = document.getElementById("userPassword").value;
+        const confirm = document.getElementById("userPasswordConfirm").value;
+        const firstName = document.getElementById("userFirstName").value.trim();
+        const lastName = document.getElementById("userLastName").value.trim();
+
+        errorBox.style.display = "none";
+        errorBox.innerText = "";
+
+        if (!email || !password || !confirm || !firstName || !lastName) {
+            showError("All fields are required");
+            return;
+        }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            showError("Invalid email format");
+            return;
+        }
+
+        if (!email.endsWith("@ngurra.edu.au")) {
+            showError("Email must be @ngurra.edu.au");
+            return;
+        }
+
+        if (
+            password.length < 8 ||
+            !/[A-Z]/.test(password) ||
+            !/\d/.test(password) ||
+            !/[^a-zA-Z0-9]/.test(password)
+        ) {
+            showError("Password must be 8+ characters and include at least one uppercase letter, at least one number, and at least one special character");
+            return;
+        }
+
+        if (password !== confirm) {
+            showError("Passwords do not match");
+            document.getElementById("userPassword").value = "";
+            document.getElementById("userPasswordConfirm").value = "";
+            return;
+        }
+
+        form.submit();
+    });
+
+    function showError(message) {
+        errorBox.innerText = message;
+        errorBox.style.display = "block";
+    }
+
+    passwordField.addEventListener("focus", function () {
+    rulesBox.style.display = "block";
+    });
+
+    confirmField.addEventListener("focus", function () {
+    rulesBox.style.display = "block";
+    });
+
+});
+
 </script>
 {% endblock %}
