@@ -421,6 +421,12 @@ def admin_edit_user(user_id):
             models.update_user(user_id, email, honorific, first_name, last_name, role)
         return redirect(url_for('main.admin_users'))
 
+@main_bp.route('/admin/users/<int:user_id>/delete', methods=['POST'])
+@admin_required
+def admin_delete_user(user_id):
+    models.delete_user(user_id)
+    return redirect(url_for('main.admin_users'))
+
 @main_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -459,5 +465,3 @@ def register():
         return redirect(url_for('main.login'))
 
     return render_template('register.html')
-
-    return render_template('admin_user_form.html', user=user, is_edit=True)
