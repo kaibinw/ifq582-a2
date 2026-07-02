@@ -372,6 +372,14 @@ def update_cultural_metadata(item_id, status, approver_id, sensitivity, warning_
                    warning_flag, warning_text, notes, item_id))
     cursor.connection.commit()
 
+def create_cultural_metadata(item_id, status, language_group):
+    cursor = get_cursor()
+    sql = """
+    INSERT INTO CulturalMetadata(itemID, itemStatus, itemLanguageGroup, itemCulturalNote, itemCulturalWarningFlag)
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    cursor.execute(sql,(item_id, status, language_group, '', False))
+    cursor.connection.commit()
 
 def get_approvals_by_user_id(user_id):
     """Fetch approval comments by user ID"""
