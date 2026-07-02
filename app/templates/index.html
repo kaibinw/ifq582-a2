@@ -106,7 +106,7 @@
                     <div class="card h-100">
 
                         
-                        {% if item['itemStatus'] == 'Approve for Public Access' %}
+                        {% if item['itemStatus'] == 'Approve for Public Access', 'Restrict - Community Only' %}
                             <div class="thumb-approved">
                                <img class="thumb-size" src="{{ url_for('static', filename='images/' + item['itemImage']) }}" alt="{{ item['itemMediaType'] }}">
                             </div>

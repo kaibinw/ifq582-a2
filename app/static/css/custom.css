@@ -312,6 +312,25 @@ main {
   border-color: var(--charcoal-light);
 }
 
+.form-alert {
+  border-left: 4px solid;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.form-alert-danger {
+  border-color: var(--maroon);
+  background-color: var(--reddust);
+  color: var(--white);
+}
+
+.form-alert-success {
+  border-left: 4px solid var(--earth);
+  background-color: color-mix(in srgb, var(--earth) 80%, #ffffff);
+  color: var(--white);
+}
+
 .panel-title {
   font-size: 2rem;
   font-weight: 600;
