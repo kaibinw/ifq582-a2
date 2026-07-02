@@ -30,7 +30,8 @@
         <!-- LEFT COLUMN: Item image / item status / metadata -->
         <div class="col-md-4 mb-4 mb-md-0">
 
-            {% if item['itemStatus'] == 'Approve for Public Access' %}
+            <!-- If Public has access to community images they should see it instead of Pending Approval -->
+            {% if item['itemStatus'] == 'Approve for Public Access', 'Restrict - Community Only' %}
                 <div class="thumb-approved">
                     <img class="thumb-size" src="{{ url_for('static', filename='images/' + item['itemImage']) }}" alt="{{ item['itemMediaType'] }}">
                 </div>

@@ -43,16 +43,10 @@
         <!-- LEFT PANEL-->
         <div class="card-meta p-4 mb-4">
 
-            {% if item['itemStatus'] == 'Approve for Public Access' %}
+                <!-- Assessment is Elder/Admin restricted, so we can just show images directly -->
                 <div class="thumb-approved">
                     <img class="thumb-size" src="{{ url_for('static', filename='images/' + item['itemImage']) }}" alt="{{ item['itemMediaType'] }}">
                 </div>
-
-            {% else %}
-                <div class="thumb-placeholder">
-                    <img class="thumb-size" src="{{ url_for('static', filename='images/PendingApprovalPlaceholder.png') }}" alt="{{ item['itemMediaType'] }}"></img>
-                </div>
-            {% endif %}
 
             <table class="table table-metadata">
                 <tbody>
