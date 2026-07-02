@@ -25,6 +25,9 @@
                 <td>{{ user['userRole'] }}</td>
                 <td>
                     <a href="{{ url_for('main.admin_edit_user', user_id=user['userID']) }}" class="btn btn-sm btn-edit">Edit</a>
+                    <form method="POST" action="{{ url_for('main.admin_delete_user', user_id=user['userID']) }}" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-delete">Delete</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}
