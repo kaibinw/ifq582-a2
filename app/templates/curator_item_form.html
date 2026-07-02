@@ -36,8 +36,18 @@
                         <option value="Audio Recording" {% if is_edit and item['itemMediaType'] == 'Audio Recording' %}selected{% endif %}>Audio Recording</option>
                         <option value="Photograph" {% if is_edit and item['itemMediaType'] == 'Photograph' %}selected{% endif %}>Photograph</option>
                         <option value="Map" {% if is_edit and item['itemMediaType'] == 'Map' %}selected{% endif %}>Map</option>
+                    </select> 
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Language Group</label>
+                    <select name="language_group" class="form-select" required>
+                        <option value="">Language Group</option>
+                        <option value="Waka-Kabic" {% if is_edit and item['itemLanguageGroup'] == 'Waka-Kabic' %}selected{% endif %}>Waka-Kabic</option>
+                        <option value="Durabalic" {% if is_edit and item['itemLanguageGroup'] == 'Durabalic' %}selected{% endif %}>Durabalic</option>
+                        <option value="Maric" {% if is_edit and item['itemLanguageGroup'] == 'Maric' %}selected{% endif %}>Maric</option>
+                        <option value="Kalkatungic" {% if is_edit and item['itemLanguageGroup'] == 'Kalkatungic' %}selected{% endif %}>Kalkatungic</option>
                     </select>
-                    
                 </div>
 
                 <div class="form-group mb-4">

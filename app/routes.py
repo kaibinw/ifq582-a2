@@ -72,9 +72,12 @@ def index():
     user_id = session.get('userID')
 
     if user_role == 'Public':
+        user_communities = models.get_communities_for_user(user_id)
+        user_community_ids = [community['communityID'] for community in user_communities]
         items = [
             item for item in items
-            if item.get('itemStatus') in ('Approve for Public Access',)
+            if item.get('itemStatus')  == 'Approve for Public Access'
+            or (item.get('itemStatus') == 'Restrict - Community Only' and item.get('communityID') in user_community_ids)
         ]
 
     elif user_role == 'Curator':
@@ -314,6 +317,7 @@ def curator_items():
     items.sort(key=lambda item: (item['itemTitle'], item['communityName']))
     return render_template('curator_items_list.html', items=items)
 
+
 @main_bp.route('/curator/items/create', methods=['GET', 'POST'])
 @curator_required
 def curator_create_item():
@@ -325,14 +329,16 @@ def curator_create_item():
         description = request.form.get('description')
         image = request.form.get('image')
         media = request.form.get('media')
+        language_group = request.form.get('language_group')
+        status = "Pending Approval"
 
-        models.create_item(collection_id, community_id, date, title, description, media, image)
+        item_id = models.create_item(collection_id, community_id, date, title, description, media, image)
+        models.create_cultural_metadata(item_id, status, language_group)
         return redirect(url_for('main.curator_items'))
 
     collections = models.get_all_collections()
     communities = models.get_all_communities()
     return render_template('curator_item_form.html', collections=collections, communities=communities)
-
 
 @main_bp.route('/curator/items/<int:item_id>/edit', methods=['GET', 'POST'])
 @curator_required

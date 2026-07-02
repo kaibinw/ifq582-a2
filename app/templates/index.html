@@ -160,7 +160,7 @@
                                 </p>
                             {% endif %}
 
-                            {% if session.get('userRole') in ('Elder', 'Admin') and item['itemStatus'] in ('Pending Approval', 'Restrict - Community Only') %}
+                            {% if session.get('userRole') in ('Elder', 'Admin') and item['itemStatus'] in ('Pending Approval', 'Restrict - Community Only',) %}
                                 <a href="{{ url_for('main.item_assessment', item_id=item['itemID']) }}" class="stretched-link"></a>
                             {% else %}
                                 <a href="{{ url_for('main.item_detail', item_id=item['itemID']) }}" class="stretched-link"></a>

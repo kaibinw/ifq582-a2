@@ -28,6 +28,12 @@
             <!-- Navbar links -->
             <div class="collapse navbar-collapse" id="collapsibleNavbar">
                 <ul class="navbar-nav ms-auto">
+                    {% if session.get('userID') %}
+                    <li class="nav-item d-flex align-items-center justify-content-center me-3 navbar-user-info">
+                        <span class="small">Logged in as: <strong>{{ session.get('userName') }} ({{ session.get('userRole') }})</strong></span>
+                    </li>
+                    {% endif %}
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
                     </li>
@@ -44,19 +50,17 @@
                         <a class="nav-link" href="{{ url_for('main.admin_users') }}">Manage Users</a>
                     </li>
                     {% endif %}
+
                     {% if session.get('userID') %}
-                    <li class="nav-item d-flex align-items-center me-3 text-light">
-                        <span class="small">Logged in as: <strong>{{ session.get('userName') }}</strong> ({{ session.get('userRole') }})</span>
-                    </li>
                     <li class="nav-item">
-                        <a href="{{ url_for('main.logout') }}" class="btn btn-outline-light btn-custom">Logout</a>
+                        <a href="{{ url_for('main.logout') }}" class="btn btn-custom">Logout</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a href="{{ url_for('main.login') }}" class="btn btn-outline-light btn-custom" id="login-btn">Login</a>
+                        <a href="{{ url_for('main.login') }}" class="btn btn-custom" id="login-btn">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url_for('main.register') }}" class="btn btn-outline-light btn-custom" id="register-btn">Register</a>
+                        <a href="{{ url_for('main.register') }}" class="btn btn-custom" id="register-btn">Register</a>
                     </li>
                     {% endif %}
                 </ul>
