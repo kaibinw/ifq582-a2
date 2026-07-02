@@ -30,13 +30,14 @@
         <!-- LEFT COLUMN: Item image / item status / metadata -->
         <div class="col-md-4 mb-4 mb-md-0">
 
-            {% if item['itemStatus'] == "Approve for Public Access" %}
-                <div class="thumb-approved mb-4">
-                    {{ item['itemMediaType'] }}
+            {% if item['itemStatus'] == 'Approve for Public Access' %}
+                <div class="thumb-approved">
+                    <img class="thumb-size" src="{{ url_for('static', filename='images/' + item['itemImage']) }}" alt="{{ item['itemMediaType'] }}">
                 </div>
+
             {% else %}
-                <div class="thumb-placeholder mb-4">
-                    Access Restricted
+                <div class="thumb-placeholder">
+                    <img class="thumb-size" src="{{ url_for('static', filename='images/PendingApprovalPlaceholder.png') }}" alt="{{ item['itemMediaType'] }}"></img>
                 </div>
             {% endif %}
 
