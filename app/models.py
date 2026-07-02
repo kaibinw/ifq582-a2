@@ -600,7 +600,7 @@ def delete_user(user_id):
     cursor.connection.commit()
 
 def get_user_by_email(email):
-    cursor = mysql.connection.cursor()
+    cursor = get_cursor()
     cursor.execute("SELECT * FROM users WHERE LOWER(userEmail) = LOWER (%s)", (email,))
     user = cursor.fetchone()
     cursor.close()
