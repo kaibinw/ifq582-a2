@@ -38,11 +38,24 @@ html {
 
 main {
   flex: 1;
+  min-height: 60vh;
 }
 
-.navbar-collapse .nav-link {
-  text-align: right;
-  padding-right: 2px;
+@media (max-width: 575px) {
+  .navbar-collapse .navbar-nav {
+    text-align: center;
+  }
+    
+  .navbar-collapse .nav-link {
+    text-align: center;
+    padding-right: 2px;
+  }
+}
+
+@media (min-height: 800px) {
+  main {
+    min-height: 70vh;
+  }
 }
 
 .navbar-collapse .btn-custom {
@@ -58,17 +71,33 @@ main {
 .navbar-custom .navbar-brand,
 .navbar-custom .navbar-nav .nav-link {
   color: var(--sand) !important;
-  font-family: "Garamond", serif;
+  font-family: Garamond, serif;
+}
+
+.navbar-user-info {
+  color: var(--white) !important;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  font-family: "Minion", sans-serif
+}
+
+.navbar-user-info span {
+  color: var(--sand);
+}
+
+.navbar-user-info strong {
+  font-weight: 600;
+  color: var(--orange);
 }
 
 .btn-custom {
   color: var(--sand) !important;
-  background-color: var(--charcoal-light);  
+  font-family: "Garamond", serif !important;
 }
 
 .btn-custom:hover {
-  background-color: var(--sand);
-  color: var(--charcoal) !important;
+  background-color: var(--charcoal-light);
+  color: var(--sand) !important;
 }
 
 .jumbotron-custom {
@@ -90,7 +119,7 @@ main {
 
 .section-label {
   font-weight: 500;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: "Minion", sans-serif;
   text-transform: uppercase;
   color: var(--earth);
   font-size: 0.8rem;
@@ -383,6 +412,9 @@ main {
 .restricted-banner {
   background: color-mix(in srgb, var(--olivebrown) 80%, #000000);
   color: var(--burntorange);
+  font-family: Garamond;
+  font-weight: 300;
+  letter-spacing: .08em;
 }
 
 .card-charcoal {
@@ -411,8 +443,10 @@ main {
 }
 
 #footer_aoc_content {
-  max-width: 576px;
+  max-width: 574px;
   padding-top: 0.7rem;
+  padding-left: 0.2rem;
+  padding-right: 0.2rem;
 }
 
 footer {
