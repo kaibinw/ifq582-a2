@@ -72,9 +72,12 @@ def index():
     user_id = session.get('userID')
 
     if user_role == 'Public':
+        user_communities = models.get_communities_for_user(user_id)
+        user_community_ids = [community['communityID'] for community in user_communities]
         items = [
             item for item in items
-            if item.get('itemStatus') in ('Approve for Public Access',)
+            if item.get('itemStatus')  == 'Approve for Public Access'
+            or (item.get('itemStatus') == 'Restrict - Community Only' and item.get('communityID') in user_community_ids)
         ]
 
     elif user_role == 'Curator':
