@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, render_template, request, redirect, url_for, session, abort
 from . import models
 from functools import wraps
@@ -420,15 +421,43 @@ def admin_edit_user(user_id):
             models.update_user(user_id, email, honorific, first_name, last_name, role)
         return redirect(url_for('main.admin_users'))
 
+@main_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        required_domain = "@ngurra.edu.au"
+        password = request.form.get('password')
+        password_confirm = request.form.get('password_confirm')
+
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+
+        if not email or not password or not password_confirm or not first_name or not last_name:
+            return render_template('register.html', error="All fields are required", email=email, first_name=first_name, last_name=last_name)
+
+        email_pattern = r'^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_pattern, email):
+            return render_template('register.html', error="Invalid email format", email=email, first_name=first_name, last_name=last_name)
+
+        if not email.endswith("@ngurra.edu.au"):
+            return render_template('register.html', error="Email must end in @ngurra.edu.au", email=email, first_name=first_name, last_name=last_name)
+
+        if not ( len(password) >= 8 and re.search(r'[A-Z]', password) and re.search(r'\d', password) and re.search(r'[^a-zA-Z0-9]', password)
+    ):
+            return render_template('register.html', error="Password must be 8+ characters and include at least one uppercase letter, at least one number, and at least one special character", email=email, first_name=first_name, last_name=last_name)
+
+        if password and password_confirm and password != password_confirm:
+            return render_template('register.html', error="Passwords do not match", email=email, first_name=first_name, last_name=last_name)
+
+        if models.get_user_by_email(email):
+            return render_template('register.html', error="An account with this email already exists.", email=email, first_name=first_name, last_name=last_name)
+
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        models.create_user(email=email, password=hashed_password, first_name=first_name, last_name=last_name, role='Public')
+
+        return redirect(url_for('main.login'))
+
+    return render_template('register.html')
+
     return render_template('admin_user_form.html', user=user, is_edit=True)
-
-@main_bp.route('/admin/users/<int:user_id>/delete', methods=['POST'])
-@admin_required
-def admin_delete_user(user_id):
-    user = models.get_user_by_id(user_id)
-
-    if not user:
-        abort(404)
-    
-    models.delete_user(user_id)
-    return redirect(url_for('main.admin_users'))
