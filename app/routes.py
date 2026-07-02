@@ -1,5 +1,5 @@
 import re
-from flask import Blueprint, render_template, request, redirect, url_for, session, abort
+from flask import Blueprint, render_template, request, redirect, url_for, session, abort, flash
 from . import models
 from functools import wraps
 from . import bcrypt
@@ -213,13 +213,14 @@ def item_request(item_id):
     if not session.get('userID'):
         return redirect(url_for('main.login'))
     
-    first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
-    email = request.form.get('email')
-    reason = request.form.get('reason')
+    reason = request.form.get('reason', '').strip()
 
+    if not reason:
+        flash("Please input a reason", "danger")
+        return redirect(url_for('main.item_detail', item_id=item_id))
+    
     models.create_access_request(session['userID'], item_id, reason)
-
+    flash("Request submitted successfully. Library staff will respond within 5 business days.", "success")
     return redirect(url_for('main.item_detail', item_id=item_id))
 
 @main_bp.route('/assessment/<int:item_id>')
@@ -301,6 +302,7 @@ def submit_decision(item_id):
         notes=notes
     )
     
+    flash("Decision recorded successfully.", "success")
     return redirect(url_for('main.item_assessment', item_id=item_id))
 
 # =================================

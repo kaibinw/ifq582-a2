@@ -31,7 +31,7 @@
         <div class="col-md-4 mb-4 mb-md-0">
 
             <!-- If Public has access to community images they should see it instead of Pending Approval -->
-            {% if item['itemStatus'] == 'Approve for Public Access', 'Restrict - Community Only' %}
+            {% if item['itemStatus'] in 'Approve for Public Access', 'Restrict - Community Only' %}
                 <div class="thumb-approved">
                     <img class="thumb-size" src="{{ url_for('static', filename='images/' + item['itemImage']) }}" alt="{{ item['itemMediaType'] }}">
                 </div>
@@ -118,6 +118,14 @@
                 To request access to this item, complete the form below. Library staff will respond within 5 business days.
             </p>
 
+            <!-- Error alert that reason is needed -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} form-alert form-alert-{{ category }}" role="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}    
+            {% endwith %}    
             <form method="POST" action="{{ url_for('main.item_request', item_id=item['itemID']) }}">
                 <div class="form-group mb-3">
                     <label class="form-label">First Name</label>
