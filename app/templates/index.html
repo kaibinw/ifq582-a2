@@ -105,10 +105,18 @@
                 <div class="col-sm-6 col-md-4 mb-4">
                     <div class="card h-100">
 
-                        <div class="{% if item['itemStatus'] == 'Approve for Public Access' %}thumb-approved{% else %}thumb-placeholder{% endif %}">
-                            <span class="mt-1">{{ item['itemMediaType'] }}</span>
-                        </div>
+                        
+                        {% if item['itemStatus'] == 'Approve for Public Access' %}
+                            <div class="thumb-approved">
+                               <img class="thumb-size" src="{{ url_for('static', filename='images/' + item['itemImage']) }}" alt="{{ item['itemMediaType'] }}">
+                            </div>
 
+                        {% else %}
+                            <div class="thumb-placeholder">
+                                <img class="thumb-size" src="{{ url_for('static', filename='images/PendingApprovalPlaceholder.png') }}" alt="{{ item['itemMediaType'] }}"></img>
+                            </div>
+                        {% endif %}
+                        
                         <div class="card-body">
 
                             {% if item['itemStatus'] == 'Approve for Public Access' %}
